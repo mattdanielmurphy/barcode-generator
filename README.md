@@ -1,6 +1,19 @@
-# Getting Started with Create React App
+# barcode generator
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Provided an input from an OCR scan, displays barcodes of UPCs found in the scan data.
+
+## to do
+
+- parse data
+- convert each UPC into barcode
+- display interface
+  - advance to **next barcode** button
+  - return to **previous barcode** button
+  - number of current barcode in sequence
+  - (advanced) show crop of photo of scan so you can see the quantity, verify the accuracy, and don't need to keep track on the paper
+  - (advanced) note where the system missed a barcode so you know you have to do it manually
+  - (advanced) what text proceeded it in the case of milk invoices
+  - (advanced) easy way to adjust barcode on the fly to correct single-digit errors
 
 ## Available Scripts
 
