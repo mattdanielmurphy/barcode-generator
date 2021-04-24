@@ -104,7 +104,7 @@ function App() {
 	const urlParams = new URLSearchParams(queryString)
 	const URLEncodedText = urlParams.get('text')
 	const base64EncodedText = Base64DecodeUrl(URLEncodedText)
-	// const text = atob(base64EncodedText)
+	const text = atob(base64EncodedText)
 	const matches = text.match(re1)
 	const fixedMatches = matches
 		? matches
