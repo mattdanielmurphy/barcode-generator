@@ -1,15 +1,20 @@
 import './App.css'
 
+import { useEffect, useState } from 'react'
+
 import Barcode from 'react-barcode'
+import Gitrows from 'gitrows'
+import NumberPicker from './NumberPicker'
+import axios from 'axios'
 import logo from './logo.svg'
 import { text } from './text-sample'
-import { useState } from 'react'
+
+const gitrows = new Gitrows()
 
 const re1 = /[\d]{0,3}[\w]{0,2}[\d]{7,}/g
 
 function Base64DecodeUrl(str) {
-	str = str ? (str + '===').slice(0, str.length + (str.length % 4)) : ''
-	return str.replace(/-/g, '+').replace(/_/g, '/')
+	return str ? str.replace(/-/g, '+').replace(/_/g, '/') : ''
 }
 
 const letterToNumber = {
@@ -84,6 +89,7 @@ function BarcodeContainer({ UPC, index, totalUPCs }) {
 				value={currentUPC}
 			/>
 			<input type='text' value={currentUPC} onChange={handleChange} />
+			<NumberPicker />
 			<nav>
 				<a className='button' href={`#upc${index}`} onClick={reset}>
 					reset code
@@ -99,51 +105,74 @@ function BarcodeContainer({ UPC, index, totalUPCs }) {
 	)
 }
 
-function App() {
-	const queryString = window.location.search
-	const urlParams = new URLSearchParams(queryString)
-	const URLEncodedText = urlParams.get('text')
-	const base64EncodedText = Base64DecodeUrl(URLEncodedText)
-	const text = atob(base64EncodedText)
-	const matches = text.match(re1)
-	const fixedMatches = matches
-		? matches
-				.map((match) => {
-					if (match.length >= 12) {
-						if (/\d{12}/.test(match)) {
-							return match
-						} else {
-							return replaceLettersWithLikelyDigits(match)
-						}
-					} else {
-						return ''
-					}
-				})
-				.filter((match) => match)
-		: []
-
-	return matches ? (
-		<div className='App'>
-			{fixedMatches.map((match, i) => (
-				<BarcodeContainer
-					totalUPCs={fixedMatches.length}
-					UPC={match}
-					key={i}
-					index={i}
-				></BarcodeContainer>
-			))}
-			<p className='scan-more'>
-				<a
-					className='button'
-					href='shortcuts://run-shortcut?name=Scan%20Barcodes'
-				>
-					Scan More UPCs
-				</a>
-			</p>
-		</div>
-	) : (
-		<h1>no matches found</h1>
+function iOS() {
+	return (
+		[
+			'iPad Simulator',
+			'iPhone Simulator',
+			'iPod Simulator',
+			'iPad',
+			'iPhone',
+			'iPod',
+		].includes(navigator.platform) ||
+		// iPad on iOS 13 detection
+		(navigator.userAgent.includes('Mac') && 'ontouchend' in document)
 	)
+}
+
+function App() {
+	const [text, setText] = useState('')
+	gitrows
+		.get('@github/mattdanielmurphy/barcode-generator/text.json')
+		.then((result) => {
+			setText(result)
+		})
+	useEffect(() => {
+		console.log(text)
+	}, [text])
+	// const matches = text.match(re1)
+	// const fixedMatches = matches
+	// 	? matches
+	// 			.map((match) => {
+	// 				if (match.length >= 12) {
+	// 					if (/\d{12}/.test(match)) {
+	// 						return match
+	// 					} else {
+	// 						return replaceLettersWithLikelyDigits(match)
+	// 					}
+	// 				} else {
+	// 					return ''
+	// 				}
+	// 			})
+	// 			.filter((match) => match)
+	// 	: []
+	return <div>'hi'</div>
+	// return matches ? (
+	// 	<div className='App'>
+	// 		{fixedMatches.map((match, i) => (
+	// 			<BarcodeContainer
+	// 				totalUPCs={fixedMatches.length}
+	// 				UPC={match}
+	// 				key={i}
+	// 				index={i}
+	// 			/>
+	// 		))}
+	// 		<p className='scan-more'>
+	// 			<a
+	// 				className='button'
+	// 				href='shortcuts://run-shortcut?name=Scan%20Barcodes'
+	// 			>
+	// 				Scan More UPCs
+	// 			</a>
+	// 		</p>
+	// 	</div>
+	// ) : (
+	// 	<>
+	// 		<h1>no matches found</h1>
+	// 		<div>raw data:</div>
+	// 		<div>{text}</div>
+	// 	</>
+	// )
 }
 
 export default App
