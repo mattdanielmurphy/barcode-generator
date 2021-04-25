@@ -10,7 +10,7 @@ module.exports = async (req, res) => {
 	const { body } = req
 	options.token = body.token
 	gitrows.options(options)
-	const data = [body.scanned]
+	const data = { scanned: body.scanned }
 	console.log(data, body.token)
 	await gitrows
 		.replace('@github/mattdanielmurphy/temp/text.json', data)
@@ -18,5 +18,8 @@ module.exports = async (req, res) => {
 			console.log('posted')
 			console.log(v)
 			res.send('Good!')
+		})
+		.catch((err) => {
+			console.log('ERROR', err)
 		})
 }
