@@ -10,11 +10,12 @@ module.exports = async (req, res) => {
 	const { body } = req
 	options.token = body.token
 	gitrows.options(options)
-	const data = { scanned: body.scanned }
+	const data = body.scanned
 	console.log(data, body.token)
-	await gitrows.replace(
-		'@github/mattdanielmurphy/barcode-generator/text.json',
-		data,
-	)
-	res.send('Good!')
+	await gitrows
+		.put('@github/mattdanielmurphy/barcode-generator/text.json', data)
+		.then((v) => {
+			console.log(v)
+			res.send('Good!')
+		})
 }

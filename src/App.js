@@ -5,17 +5,8 @@ import { useEffect, useState } from 'react'
 import Barcode from 'react-barcode'
 import Gitrows from 'gitrows'
 import NumberPicker from './NumberPicker'
-import axios from 'axios'
-import logo from './logo.svg'
-import { text } from './text-sample'
 
 const gitrows = new Gitrows()
-
-const re1 = /[\d]{0,3}[\w]{0,2}[\d]{7,}/g
-
-function Base64DecodeUrl(str) {
-	return str ? str.replace(/-/g, '+').replace(/_/g, '/') : ''
-}
 
 const letterToNumber = {
 	A: 8,
@@ -128,9 +119,11 @@ function App() {
 			setText(scanned)
 		})
 	useEffect(() => {
-		console.log(text)
+		console.log('text updated', text)
 	}, [text])
-	// const matches = text.match(re1)
+	const re1 = /[\d]{0,3}[\w]{0,2}[\d]{7,}/g
+	const matches = text.match(re1)
+	console.log('matches', matches)
 	// const fixedMatches = matches
 	// 	? matches
 	// 			.map((match) => {
