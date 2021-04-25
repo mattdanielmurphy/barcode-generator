@@ -3,6 +3,7 @@ import './App.css'
 import { useEffect, useState } from 'react'
 
 import Barcode from 'react-barcode'
+import { Cookies } from 'js-cookie'
 import Gitrows from 'gitrows'
 import NumberPicker from './NumberPicker'
 
@@ -112,10 +113,7 @@ function iOS() {
 }
 
 function App() {
-	const [text, setText] = useState('')
-	gitrows.get('@github/mattdanielmurphy/temp/text.json').then(({ scanned }) => {
-		setText(scanned)
-	})
+	const [text, setText] = useState(Cookies.get('scanned'))
 	useEffect(() => {
 		console.log('text updated', text)
 	}, [text])
