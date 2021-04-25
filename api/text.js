@@ -4,8 +4,7 @@ const gitrows = new Gitrows()
 
 module.exports = async (request, resolve) => {
 	console.log('request received')
-	console.log(gitrows)
-	resolve(request)
+	resolve.status(200)
 	if (request.body && request.body.scanned) {
 		console.log('body.scanned found')
 		gitrows
