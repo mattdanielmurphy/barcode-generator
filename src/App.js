@@ -124,8 +124,8 @@ function App() {
 	const [text, setText] = useState('')
 	gitrows
 		.get('@github/mattdanielmurphy/barcode-generator/text.json')
-		.then((result) => {
-			setText(result)
+		.then(({ scanned }) => {
+			setText(scanned)
 		})
 	useEffect(() => {
 		console.log(text)
@@ -146,7 +146,7 @@ function App() {
 	// 			})
 	// 			.filter((match) => match)
 	// 	: []
-	return <div>'hi'</div>
+	return <div>{JSON.stringify(text)}</div>
 	// return matches ? (
 	// 	<div className='App'>
 	// 		{fixedMatches.map((match, i) => (
