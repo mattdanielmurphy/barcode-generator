@@ -146,7 +146,7 @@ function App() {
 	// 			})
 	// 			.filter((match) => match)
 	// 	: []
-	return <div>{JSON.stringify(text)}</div>
+	return <div>{typeof text === 'string' && text}</div>
 	// return matches ? (
 	// 	<div className='App'>
 	// 		{fixedMatches.map((match, i) => (
