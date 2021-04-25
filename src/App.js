@@ -113,11 +113,9 @@ function iOS() {
 
 function App() {
 	const [text, setText] = useState('')
-	gitrows
-		.get('@github/mattdanielmurphy/barcode-generator/text.json')
-		.then(({ scanned }) => {
-			setText(scanned)
-		})
+	gitrows.get('@github/mattdanielmurphy/temp/text.json').then(({ scanned }) => {
+		setText(scanned)
+	})
 	useEffect(() => {
 		console.log('text updated', text)
 	}, [text])
