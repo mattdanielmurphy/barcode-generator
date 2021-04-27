@@ -94,30 +94,16 @@ function BarcodeContainer({ UPC, index, totalUPCs }) {
 	)
 }
 
-function iOS() {
-	return (
-		[
-			'iPad Simulator',
-			'iPhone Simulator',
-			'iPod Simulator',
-			'iPad',
-			'iPhone',
-			'iPod',
-		].includes(navigator.platform) ||
-		// iPad on iOS 13 detection
-		(navigator.userAgent.includes('Mac') && 'ontouchend' in document)
-	)
-}
-
 function App() {
 	const [text, setText] = useState('')
 	const [UPCs, setUPCs] = useState([])
 
 	async function getTextFromDatabase() {
-		const text = await axios.get(
+		const { text } = await axios.get(
 			'https://barcode-generator-beta.vercel.app/api/text',
 		)
 		console.log(text)
+
 		return text
 	}
 

@@ -23,7 +23,6 @@ async function handlePOST(req, res) {
 }
 
 module.exports = async (req, res) => {
-	if (req.body.text) {
-		handlePOST(req, res)
-	} else handleGET(res)
+	if (req.body.text !== undefined) handlePOST(req, res)
+	else handleGET(res)
 }
