@@ -3,11 +3,8 @@ import './App.css'
 import { useEffect, useState } from 'react'
 
 import Barcode from 'react-barcode'
-import { Cookies } from 'js-cookie'
-import Gitrows from 'gitrows'
 import NumberPicker from './NumberPicker'
-
-const gitrows = new Gitrows()
+import axios from 'axios'
 
 const letterToNumber = {
 	A: 8,
@@ -113,55 +110,75 @@ function iOS() {
 }
 
 function App() {
-	const [text, setText] = useState(Cookies.get('scanned'))
+	const [text, setText] = useState('')
+	const [UPCs, setUPCs] = useState([])
+
+	async function getTextFromDatabase() {
+		const text = await axios.get(
+			'https://barcode-generator-beta.vercel.app/api/text',
+		)
+		console.log(text)
+		return text
+	}
+
 	useEffect(() => {
+		getTextFromDatabase().then((text) => {
+			console.log('text: ', text)
+			setText(text)
+		})
+	}, [])
+
+	useEffect(() => {
+		function filterScannedText() {
+			const re1 = /[\d]{0,3}[\w]{0,2}[\d]{7,}/g
+			const matches = text.match(re1)
+			const fixedMatches = matches
+				? matches
+						.map((match) => {
+							if (match.length >= 12) {
+								if (/\d{12}/.test(match)) {
+									return match
+								} else {
+									return replaceLettersWithLikelyDigits(match)
+								}
+							} else {
+								return ''
+							}
+						})
+						.filter((match) => match)
+				: []
+			return fixedMatches
+		}
+		setUPCs(filterScannedText())
 		console.log('text updated', text)
 	}, [text])
-	const re1 = /[\d]{0,3}[\w]{0,2}[\d]{7,}/g
-	const matches = text.match(re1)
-	console.log('matches', matches)
-	// const fixedMatches = matches
-	// 	? matches
-	// 			.map((match) => {
-	// 				if (match.length >= 12) {
-	// 					if (/\d{12}/.test(match)) {
-	// 						return match
-	// 					} else {
-	// 						return replaceLettersWithLikelyDigits(match)
-	// 					}
-	// 				} else {
-	// 					return ''
-	// 				}
-	// 			})
-	// 			.filter((match) => match)
-	// 	: []
-	return <div>{typeof text === 'string' && text}</div>
-	// return matches ? (
-	// 	<div className='App'>
-	// 		{fixedMatches.map((match, i) => (
-	// 			<BarcodeContainer
-	// 				totalUPCs={fixedMatches.length}
-	// 				UPC={match}
-	// 				key={i}
-	// 				index={i}
-	// 			/>
-	// 		))}
-	// 		<p className='scan-more'>
-	// 			<a
-	// 				className='button'
-	// 				href='shortcuts://run-shortcut?name=Scan%20Barcodes'
-	// 			>
-	// 				Scan More UPCs
-	// 			</a>
-	// 		</p>
-	// 	</div>
-	// ) : (
-	// 	<>
-	// 		<h1>no matches found</h1>
-	// 		<div>raw data:</div>
-	// 		<div>{text}</div>
-	// 	</>
-	// )
+
+	return UPCs.length > 0 ? (
+		<div className='App'>
+			{UPCs.map((match, i) => (
+				<BarcodeContainer
+					totalUPCs={UPCs.length}
+					UPC={match}
+					key={i}
+					index={i}
+				/>
+			))}
+			<p className='scan-more'>
+				<a
+					className='button'
+					href='shortcuts://run-shortcut?name=Scan%20Barcodes'
+				>
+					Scan More UPCs
+				</a>
+			</p>
+		</div>
+	) : (
+		<>
+			<h1>no matches found</h1>
+			<div>raw data:</div>
+			<div>{text}</div>
+		</>
+	)
 }
 
 export default App

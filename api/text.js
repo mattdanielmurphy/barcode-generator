@@ -1,7 +1,12 @@
-import Cookies from 'js-cookie'
-
+import faunadb from 'faunadb'
+require('dotenv').config()
+const q = faunadb.query
+const client = new faunadb.Client({ secret: process.env.DB_SECRET })
 module.exports = async (req, res) => {
-	const { body } = req
-	Cookies.set('scanned', body.scanned)
-	res.send('Good!')
+	const text = await client
+		.query(
+			q.Get(q.Ref(q.Collection('barcode-generator'), '297066273465958925')),
+		)
+		.catch((err) => console.error('Error: %s', err))
+	res.status(200).json({ text })
 }
