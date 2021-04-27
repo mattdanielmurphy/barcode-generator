@@ -7,6 +7,7 @@ module.exports = async (req, res) => {
 		.query(
 			q.Get(q.Ref(q.Collection('barcode-generator'), '297066273465958925')),
 		)
+		.then((result) => result.data)
 		.catch((err) => console.error('Error: %s', err))
 	res.status(200).json({ text })
 }
