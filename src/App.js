@@ -106,36 +106,33 @@ function App() {
 	}
 
 	useEffect(() => {
-		getTextFromDatabase().then((text) => {
-			console.log('text: ', text)
+		async function getText() {
+			const text = await getTextFromDatabase()
 			setText(text)
-		})
-	}, [])
-
-	useEffect(() => {
-		function filterScannedText() {
-			const re1 = /[\d]{0,3}[\w]{0,2}[\d]{7,}/g
-			const matches = text.match(re1)
-			const fixedMatches = matches
-				? matches
-						.map((match) => {
-							if (match.length >= 12) {
-								if (/\d{12}/.test(match)) {
-									return match
+			function filterScannedText() {
+				const re1 = /[\d]{0,3}[\w]{0,2}[\d]{7,}/g
+				const matches = text.match(re1)
+				const fixedMatches = matches
+					? matches
+							.map((match) => {
+								if (match.length >= 12) {
+									if (/\d{12}/.test(match)) {
+										return match
+									} else {
+										return replaceLettersWithLikelyDigits(match)
+									}
 								} else {
-									return replaceLettersWithLikelyDigits(match)
+									return ''
 								}
-							} else {
-								return ''
-							}
-						})
-						.filter((match) => match)
-				: []
-			return fixedMatches
+							})
+							.filter((match) => match)
+					: []
+				return fixedMatches
+			}
+			setUPCs(filterScannedText())
 		}
-		setUPCs(filterScannedText())
-		console.log('text updated', text)
-	}, [text])
+		getText()
+	}, [])
 
 	return UPCs.length > 0 ? (
 		<div className='App'>
@@ -156,12 +153,14 @@ function App() {
 				</a>
 			</p>
 		</div>
-	) : (
+	) : text ? (
 		<>
 			<h1>no matches found</h1>
 			<div>raw data:</div>
 			<div>{text}</div>
 		</>
+	) : (
+		<></>
 	)
 }
 
