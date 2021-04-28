@@ -7,38 +7,47 @@ import NumberPicker from './NumberPicker'
 import axios from 'axios'
 import styled from 'styled-components'
 
-function BarcodeContainer({ UPC, index, totalUPCs }) {
+require('dotenv').config()
+
+function BarcodeContainer({ UPC, index, totalUPCs, signInCodes }) {
 	const [currentUPC, setCurrentUPC] = useState(() => {
 		return UPC
 	})
-	const navUp = `#upc${index - 1}`
-	const navDown = `#upc${index + 1}`
+	const c = signInCodes ? 'signIn' : 'upc'
+	const navUp = `#${c}${index - 1}`
+	const navDown = `#${index === 1 ? 'upc' : c}${index + 1}`
 
 	function reset() {
 		setCurrentUPC(UPC)
 	}
 	return (
-		<div key={index} id={`upc${index}`} className='upc'>
+		<div key={index} id={`${c}${index}`} className='upc'>
 			<h3>
+				{signInCodes && 'Sign-In Codes: '}
 				{index + 1} of {totalUPCs}
 			</h3>
 			<Barcode
 				{...{
 					width: 3,
 					height: 400,
-					format: 'CODE128',
 					displayValue: false,
-					background: '#ffffff',
-					lineColor: '#000000',
 					margin: 10,
 				}}
 				value={currentUPC}
 			/>
-			<NumberPicker currentUPC={currentUPC} setCurrentUPC={setCurrentUPC} />
+			{/^\d*$/.test(currentUPC) && (
+				<NumberPicker currentUPC={currentUPC} setCurrentUPC={setCurrentUPC} />
+			)}
 			<nav>
-				<a className='button' href={`#upc${index}`} onClick={reset}>
-					reset code
-				</a>
+				{signInCodes ? (
+					<a className='button' href={`#upc0`}>
+						skip
+					</a>
+				) : (
+					<a className='button' href={`#${c}${index}`} onClick={reset}>
+						reset code
+					</a>
+				)}
 				<a className='button' href={navUp}>
 					up
 				</a>
@@ -50,29 +59,48 @@ function BarcodeContainer({ UPC, index, totalUPCs }) {
 	)
 }
 
+function SignInCodes() {
+	return (
+		<>
+			<BarcodeContainer
+				totalUPCs={2}
+				UPC={process.env.REACT_APP_USER}
+				index={0}
+				signInCodes
+			/>
+			<BarcodeContainer
+				totalUPCs={2}
+				UPC={process.env.REACT_APP_PASS}
+				index={1}
+				signInCodes
+			/>
+		</>
+	)
+}
+
 function App() {
 	const [text, setText] = useState('')
 	const [UPCs, setUPCs] = useState([])
 
 	async function getTextFromDatabase() {
-		const { data } = await axios.get(
-			'https://barcode-generator-beta.vercel.app/api/text',
-		)
-		// const data = {
-		// 	text: `068258002405
-		// 681131911955
-		// 67495900008
-		// 681131911962
-		// 67495900009
-		// 67495900010
-		// 67495900006
-		// 67495900002
-		// 67495900003
-		// 67495900012
-		// 68258618422
-		// 068258618309
-		// 067495900022`,
-		// }
+		// const { data } = await axios.get(
+		// 	'https://barcode-generator-beta.vercel.app/api/text',
+		// )
+		const data = {
+			text: `068258002405
+		681131911955
+		67495900008
+		681131911962
+		67495900009
+		67495900010
+		67495900006
+		67495900002
+		67495900003
+		67495900012
+		68258618422
+		068258618309
+		067495900022`,
+		}
 		return data.text
 	}
 
@@ -93,14 +121,7 @@ function App() {
 
 	return UPCs.length > 0 ? (
 		<Container className='App'>
-			<p className='scan-more'>
-				<a
-					className='button'
-					href='shortcuts://run-shortcut?name=Scan%20Barcodes'
-				>
-					Scan More UPCs
-				</a>
-			</p>
+			<SignInCodes />
 			{UPCs.map((match, i) => (
 				<BarcodeContainer
 					totalUPCs={UPCs.length}
