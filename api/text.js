@@ -17,7 +17,7 @@ async function handlePOST(req, res) {
 	const ref = q.Ref(q.Collection('barcode-generator'), '297066273465958925')
 
 	const data = await client
-		.query(q.Replace(ref, object))
+		.query(q.Replace(ref, { data: object }))
 		.catch((err) => console.error('Error: %s', err))
 	res.status(200).json(data)
 }
