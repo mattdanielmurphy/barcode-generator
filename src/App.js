@@ -5,47 +5,7 @@ import { useEffect, useState } from 'react'
 import Barcode from 'react-barcode'
 import NumberPicker from './NumberPicker'
 import axios from 'axios'
-
-const letterToNumber = {
-	A: 8,
-	B: 8,
-	C: 0,
-	D: 0,
-	E: 8,
-	F: 8,
-	G: 0,
-	H: 8,
-	I: 1,
-	J: 0,
-	K: 8,
-	L: 1,
-	M: 0,
-	N: 8,
-	O: 0,
-	P: 2,
-	Q: 0,
-	R: 8,
-	S: 5,
-	T: 7,
-	U: 0,
-	V: 0,
-	W: 0,
-	X: 0,
-	Y: 1,
-	Z: 0,
-}
-
-function replaceLettersWithLikelyDigits(str) {
-	return str
-		.split('')
-		.map((digit) => {
-			if (isNaN(Number(digit))) {
-				console.log(digit)
-				return letterToNumber[digit]
-			} else return digit
-		})
-		.join('')
-}
+import styled from 'styled-components'
 
 function BarcodeContainer({ UPC, index, totalUPCs }) {
 	const [currentUPC, setCurrentUPC] = useState(() => {
@@ -54,9 +14,6 @@ function BarcodeContainer({ UPC, index, totalUPCs }) {
 	const navUp = `#upc${index - 1}`
 	const navDown = `#upc${index + 1}`
 
-	function handleChange(e) {
-		setCurrentUPC(e.target.value)
-	}
 	function reset() {
 		setCurrentUPC(UPC)
 	}
@@ -77,8 +34,7 @@ function BarcodeContainer({ UPC, index, totalUPCs }) {
 				}}
 				value={currentUPC}
 			/>
-			<input type='text' value={currentUPC} onChange={handleChange} />
-			<NumberPicker />
+			<NumberPicker currentUPC={currentUPC} setCurrentUPC={setCurrentUPC} />
 			<nav>
 				<a className='button' href={`#upc${index}`} onClick={reset}>
 					reset code
@@ -99,9 +55,22 @@ function App() {
 	const [UPCs, setUPCs] = useState([])
 
 	async function getTextFromDatabase() {
-		const { data } = await axios.get(
-			'https://barcode-generator-beta.vercel.app/api/text',
-		)
+		// const { data } = await axios.get('https://barcode-generator-beta.vercel.app/api/text')
+		const data = {
+			text: `068258002405
+		681131911955
+		67495900008
+		681131911962
+		67495900009
+		67495900010
+		67495900006
+		67495900002
+		67495900003
+		67495900012
+		68258618422
+		068258618309
+		067495900022`,
+		}
 		return data.text
 	}
 
@@ -110,24 +79,10 @@ function App() {
 			const text = await getTextFromDatabase()
 			setText(text)
 			function filterScannedText() {
-				const re1 = /[\d]{0,3}[\w]{0,2}[\d]{7,}/g
+				// const re1 = /[\d]{0,3}[\w]{0,2}[\d]{7,}/g
+				const re1 = /[1-9]\d{10}/g
 				const matches = text.match(re1)
-				const fixedMatches = matches
-					? matches
-							.map((match) => {
-								if (match.length >= 12) {
-									if (/\d{12}/.test(match)) {
-										return match
-									} else {
-										return replaceLettersWithLikelyDigits(match)
-									}
-								} else {
-									return ''
-								}
-							})
-							.filter((match) => match)
-					: []
-				return fixedMatches
+				return matches
 			}
 			setUPCs(filterScannedText())
 		}
@@ -135,7 +90,15 @@ function App() {
 	}, [])
 
 	return UPCs.length > 0 ? (
-		<div className='App'>
+		<Container className='App'>
+			<p className='scan-more'>
+				<a
+					className='button'
+					href='shortcuts://run-shortcut?name=Scan%20Barcodes'
+				>
+					Scan More UPCs
+				</a>
+			</p>
 			{UPCs.map((match, i) => (
 				<BarcodeContainer
 					totalUPCs={UPCs.length}
@@ -152,7 +115,7 @@ function App() {
 					Scan More UPCs
 				</a>
 			</p>
-		</div>
+		</Container>
 	) : text ? (
 		<>
 			<h1>no matches found</h1>
@@ -165,3 +128,48 @@ function App() {
 }
 
 export default App
+
+const Container = styled.div`
+	margin: 3em auto;
+`
+
+// const letterToNumber = {
+// 	A: 8,
+// 	B: 8,
+// 	C: 0,
+// 	D: 0,
+// 	E: 8,
+// 	F: 8,
+// 	G: 0,
+// 	H: 8,
+// 	I: 1,
+// 	J: 0,
+// 	K: 8,
+// 	L: 1,
+// 	M: 0,
+// 	N: 8,
+// 	O: 0,
+// 	P: 2,
+// 	Q: 0,
+// 	R: 8,
+// 	S: 5,
+// 	T: 7,
+// 	U: 0,
+// 	V: 0,
+// 	W: 0,
+// 	X: 0,
+// 	Y: 1,
+// 	Z: 0,
+// }
+
+// function replaceLettersWithLikelyDigits(str) {
+// 	return str
+// 		.split('')
+// 		.map((digit) => {
+// 			if (isNaN(Number(digit))) {
+// 				console.log(digit)
+// 				return letterToNumber[digit]
+// 			} else return digit
+// 		})
+// 		.join('')
+// }
