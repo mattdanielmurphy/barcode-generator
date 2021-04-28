@@ -132,17 +132,18 @@ function Generator() {
 		getText()
 	}, [])
 
-	return UPCs.length > 0 ? (
+	return (
 		<Container>
 			<SignInCodes />
-			{UPCs.map((match, i) => (
-				<BarcodeContainer
-					totalUPCs={UPCs.length}
-					UPC={match}
-					key={i}
-					index={i}
-				/>
-			))}
+			{UPCs.length > 0 &&
+				UPCs.map((match, i) => (
+					<BarcodeContainer
+						totalUPCs={UPCs.length}
+						UPC={match}
+						key={i}
+						index={i}
+					/>
+				))}
 			<p className='scan-more'>
 				<a
 					className='button'
@@ -152,14 +153,6 @@ function Generator() {
 				</a>
 			</p>
 		</Container>
-	) : text ? (
-		<>
-			<h1>no matches found</h1>
-			<div>raw data:</div>
-			<div>{text}</div>
-		</>
-	) : (
-		<></>
 	)
 }
 
