@@ -99,10 +99,10 @@ function App() {
 	const [UPCs, setUPCs] = useState([])
 
 	async function getTextFromDatabase() {
-		const text = await axios.get(
+		const { data } = await axios.get(
 			'https://barcode-generator-beta.vercel.app/api/text',
 		)
-		return text
+		return data.text
 	}
 
 	useEffect(() => {
