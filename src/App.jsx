@@ -50,10 +50,10 @@ function BarcodeContainer({ UPC, index, totalUPCs, signInCodes }) {
 				)}
 				<div className='up-down-nav'>
 					<a className='button' href={navUp}>
-						⬆
+						▲
 					</a>
 					<a className='button' href={navDown}>
-						⬇
+						▼
 					</a>
 				</div>
 			</nav>
