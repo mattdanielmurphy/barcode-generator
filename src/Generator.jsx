@@ -130,6 +130,7 @@ function Generator() {
 			setUPCs(filterScannedText())
 		}
 		getText()
+		window.scrollTo(0, 1)
 	}, [])
 
 	return (
