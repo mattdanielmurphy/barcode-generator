@@ -102,8 +102,6 @@ function App() {
 		const { text } = await axios.get(
 			'https://barcode-generator-beta.vercel.app/api/text',
 		)
-		console.log(text)
-
 		return text
 	}
 
