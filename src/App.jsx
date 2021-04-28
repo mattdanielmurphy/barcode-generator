@@ -15,7 +15,7 @@ function BarcodeContainer({ UPC, index, totalUPCs, signInCodes }) {
 	})
 	const c = signInCodes ? 'signIn' : 'upc'
 	const navUp = `#${c}${index - 1}`
-	const navDown = `#${index === 1 ? 'upc' : c}${index + 1}`
+	const navDown = index === 1 ? `#upc0` : `#${c}${index + 1}`
 
 	function reset() {
 		setCurrentUPC(UPC)
