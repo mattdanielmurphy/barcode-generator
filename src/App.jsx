@@ -45,15 +45,17 @@ function BarcodeContainer({ UPC, index, totalUPCs, signInCodes }) {
 					</a>
 				) : (
 					<a className='button' href={`#${c}${index}`} onClick={reset}>
-						reset code
+						reset
 					</a>
 				)}
-				<a className='button' href={navUp}>
-					up
-				</a>
-				<a className='button' href={navDown}>
-					down
-				</a>
+				<div className='up-down-nav'>
+					<a className='button' href={navUp}>
+						⬆
+					</a>
+					<a className='button' href={navDown}>
+						⬇
+					</a>
+				</div>
 			</nav>
 		</div>
 	)
