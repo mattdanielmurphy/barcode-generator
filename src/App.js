@@ -55,22 +55,24 @@ function App() {
 	const [UPCs, setUPCs] = useState([])
 
 	async function getTextFromDatabase() {
-		// const { data } = await axios.get('https://barcode-generator-beta.vercel.app/api/text')
-		const data = {
-			text: `068258002405
-		681131911955
-		67495900008
-		681131911962
-		67495900009
-		67495900010
-		67495900006
-		67495900002
-		67495900003
-		67495900012
-		68258618422
-		068258618309
-		067495900022`,
-		}
+		const { data } = await axios.get(
+			'https://barcode-generator-beta.vercel.app/api/text',
+		)
+		// const data = {
+		// 	text: `068258002405
+		// 681131911955
+		// 67495900008
+		// 681131911962
+		// 67495900009
+		// 67495900010
+		// 67495900006
+		// 67495900002
+		// 67495900003
+		// 67495900012
+		// 68258618422
+		// 068258618309
+		// 067495900022`,
+		// }
 		return data.text
 	}
 
