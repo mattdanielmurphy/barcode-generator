@@ -103,7 +103,7 @@ function Generator() {
 		} else {
 			const { data } = await axios.get(appURL)
 			console.log(data)
-			return data
+			return data.text
 		}
 	}
 
