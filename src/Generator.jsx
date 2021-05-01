@@ -121,9 +121,9 @@ function Generator() {
 					})
 					.map((match) => {
 						console.log('mat', match)
-						// const newMatch = match.replace(//, '')
-						console.log(match)
-						return /^\d{11}/.exec(match)[0]
+						const newMatch = match.replace(/\./, '')
+						console.log(newMatch)
+						return /^\d{11}/.exec(newMatch)[0]
 					})
 				// const re1 = /[1-9]\d{10}/g
 				// const matches = text.match(re1)
