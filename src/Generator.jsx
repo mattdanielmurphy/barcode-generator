@@ -101,7 +101,9 @@ function Generator() {
 				.split(':')
 				.join('\n')
 		} else {
-			return await axios.get(appURL)
+			const text = await axios.get(appURL)
+			console.log(text)
+			return text
 		}
 	}
 
