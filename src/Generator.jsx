@@ -1,3 +1,6 @@
+import 'antd/dist/antd.css'
+
+import { Button, Card, Layout, Modal, Space } from 'antd'
 import { useEffect, useState } from 'react'
 
 import Barcode from 'react-barcode'
@@ -5,103 +8,93 @@ import NumberPicker from './NumberPicker'
 import axios from 'axios'
 import styled from 'styled-components'
 
+const { Header, Content } = Layout
+
+const StyledCard = styled(Card)`
+	margin: 2em auto;
+	/* width: 400px; */
+	text-align: center;
+`
+
 require('dotenv').config()
 
-const localHostnames = ['192.168.1.1', 'localhost']
-const appURL = 'https://barcode-generator-beta.vercel.app/api/text'
+const appURL = 'https://barcode-generator-beta.vercel.app/'
 
-function BarcodeContainer({
-	UPC,
-	index,
-	totalUPCs,
-	signInCodes,
-	barcodeOptions,
-}) {
-	const [currentUPC, setCurrentUPC] = useState(() => {
-		return UPC
-	})
-	const c = signInCodes ? 'signIn' : 'upc'
-	const navUp = `#${c}${index - 1}`
-	const navDown = signInCodes && index === 1 ? `#upc0` : `#${c}${index + 1}`
+const BarcodeWrapper = ({ children, title, noWrapper }) =>
+	noWrapper ? (
+		<Space
+			direction='vertical'
+			css={`
+				text-align: center;
+				display: flex;
+			`}
+		>
+			{children}
+		</Space>
+	) : (
+		<StyledCard title={title}>
+			<Space direction='vertical'>{children}</Space>
+		</StyledCard>
+	)
 
-	function reset() {
-		setCurrentUPC(UPC)
-	}
+function BarcodeViewer({ UPCs, noWrapper }) {
+	const [index, setIndex] = useState(0)
+	const [currentUPC, setCurrentUPC] = useState(UPCs[index])
+	useEffect(() => {
+		setCurrentUPC(UPCs[index])
+	}, [index, UPCs])
+	const navUp = () => UPCs[index - 1] && setIndex(index - 1)
+	const navDown = () => UPCs[index + 1] && setIndex(index + 1)
+	const reset = () => setCurrentUPC(UPCs[index])
+	const title = `${index + 1} of ${UPCs.length}`
 	return (
-		<div key={index} id={`${c}${index}`} className='upc'>
-			<h3>
-				{signInCodes && 'Sign-In Codes: '}
-				{index + 1} of {totalUPCs}
-			</h3>
+		<BarcodeWrapper title={title} noWrapper={noWrapper}>
 			<Barcode
 				{...{
 					width: 3,
 					height: 400,
 					displayValue: false,
-					margin: 10,
-					...barcodeOptions,
+					margin: 0,
 				}}
-				value={currentUPC}
+				value={currentUPC.replace(/\s/, '')}
 			/>
-			{/^\d*$/.test(currentUPC) && (
+			{currentUPC.match(/^[\d\s]*$/) && (
 				<NumberPicker currentUPC={currentUPC} setCurrentUPC={setCurrentUPC} />
 			)}
-			<nav>
-				{signInCodes ? (
-					<a className='button' href={`#upc0`}>
-						skip
-					</a>
-				) : (
-					<a className='button' href={`#${c}${index}`} onClick={reset}>
-						reset
-					</a>
+			<Space
+				css={`
+					margin: 1em;
+				`}
+			>
+				{currentUPC.match(/^[\d\s]*$/) && (
+					<Button onClick={reset}>Reset</Button>
 				)}
-				<div className='up-down-nav'>
-					<a className='button' href={navUp}>
-						▲
-					</a>
-					<a className='button' href={navDown}>
-						▼
-					</a>
-				</div>
-			</nav>
-		</div>
+				<Button onClick={navUp}>▲</Button>
+				<Button onClick={navDown}>▼</Button>
+			</Space>
+		</BarcodeWrapper>
 	)
 }
 
-function SignInCodes() {
-	return (
-		<>
-			<BarcodeContainer
-				totalUPCs={2}
-				UPC={process.env.REACT_APP_USER}
-				index={0}
-				signInCodes
-				barcodeOptions={{ backgroundColor: '#FAFAC3' }}
-			/>
-			<BarcodeContainer
-				totalUPCs={2}
-				UPC={process.env.REACT_APP_PASS}
-				index={1}
-				signInCodes
-				barcodeOptions={{ backgroundColor: '#FAFAC3' }}
-			/>
-		</>
-	)
-}
+const SignInCodes = () => (
+	<BarcodeViewer
+		noWrapper
+		UPCs={[process.env.REACT_APP_USER, process.env.REACT_APP_PASS]}
+	/>
+)
 
 function Generator() {
-	const [text, setText] = useState('')
+	// const [text, setText] = useState('')
 	const [UPCs, setUPCs] = useState([])
 
 	async function getTextFromDatabase() {
-		if (localHostnames.includes(window.location.hostname)) {
+		if (window.location.hostname === '192.168.1.1') {
 			return `068258002405:681131911955:67495900008:681131911962:67495900009:67495900010:67495900006:67495900002
-67495900003:67495900012:68258618422:068258618309:067495900022`
+			67495900003:67495900012:68258618422:068258618309:067495900022`
 				.split(':')
 				.join('\n')
 		} else {
-			const { data } = await axios.get(appURL)
+			const { data } = await axios.get(appURL + 'api/text')
 			console.log(data)
 			return data.text
 		}
@@ -110,7 +103,7 @@ function Generator() {
 	useEffect(() => {
 		async function getText() {
 			const text = await getTextFromDatabase()
-			setText(text)
+			// setText(text)
 			function filterScannedText() {
 				const elevenTo12Digits = /[\d\w]{11,12}/g
 				const matches = text
@@ -132,38 +125,56 @@ function Generator() {
 			setUPCs(filterScannedText())
 		}
 		getText()
-		window.scrollTo(0, 1)
 	}, [])
 
+	const [isModalVisible, setIsModalVisible] = useState(false)
+
+	const showModal = () => setIsModalVisible(true)
+
+	const handleOk = () => setIsModalVisible(false)
+
+	const handleCancel = () => setIsModalVisible(false)
+
 	return (
-		<Container>
-			<SignInCodes />
-			{UPCs.length > 0 &&
-				UPCs.map((match, i) => (
-					<BarcodeContainer
-						totalUPCs={UPCs.length}
-						UPC={match}
-						key={i}
-						index={i}
-					/>
-				))}
-			<p className='scan-more'>
-				<a
-					className='button'
-					href='shortcuts://run-shortcut?name=Scan%20Barcodes'
-				>
-					Scan More UPCs
-				</a>
-			</p>
-		</Container>
+		<Layout
+			css={`
+				background: white;
+			`}
+		>
+			<Header
+				css={`
+					position: fixed;
+					bottom: 0;
+					width: 100%;
+					z-index: 9999;
+					background: white;
+					box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
+				`}
+			>
+				<Space>
+					<Button
+						type='link'
+						href='shortcuts://run-shortcut?name=Scan%20Barcodes'
+					>
+						Back
+					</Button>
+					<Button onClick={showModal}>Show Sign-In Codes</Button>
+					<Modal
+						title='Sign-In Codes'
+						visible={isModalVisible}
+						onOk={handleOk}
+						onCancel={handleCancel}
+					>
+						<SignInCodes />
+					</Modal>
+				</Space>
+			</Header>
+			<Content>{UPCs.length > 0 && <BarcodeViewer UPCs={UPCs} />}</Content>
+		</Layout>
 	)
 }
 
 export default Generator
-
-const Container = styled.div`
-	margin: 3em auto;
-`
 
 const letterToNumber = {
 	A: 8,
