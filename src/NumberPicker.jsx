@@ -71,7 +71,7 @@ const Input = styled.input`
 	border: none;
 	text-align: center;
 	font-family: monospace;
-	font-size: 1.8em;
+	font-size: 1.6em;
 `
 
 export default NumberPicker
