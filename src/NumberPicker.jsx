@@ -6,7 +6,7 @@ import styled from 'styled-components'
 function NumberPicker({ currentUPC, setCurrentUPC }) {
 	function handleChange(e, i) {
 		let { value } = e.target
-		console.log(value)
+		console.log('change', value)
 		if (/^\d$/.test(value)) {
 			if (value === '-1') value = 9
 			else if (value === '10') value = 0
@@ -18,7 +18,6 @@ function NumberPicker({ currentUPC, setCurrentUPC }) {
 		}
 	}
 	function handleKeyUp(e, i) {
-		console.log(e)
 		e.target.select()
 		if (
 			e.keyCode === 8 &&
@@ -37,7 +36,7 @@ function NumberPicker({ currentUPC, setCurrentUPC }) {
 		<Container>
 			{currentUPC.split('').map((digit, i) => (
 				<Input
-					type='text'
+					type='number'
 					onFocus={(e) => {
 						e.preventDefault()
 						e.target.select()
@@ -66,12 +65,12 @@ const Container = styled.div`
 `
 const Input = styled.input`
 	-webkit-appearance: none;
-	width: 1.1em;
+	width: 1.5em;
 	background: none;
 	border: none;
 	text-align: center;
 	font-family: monospace;
-	font-size: 1.6em;
+	font-size: 1.5em;
 `
 
 export default NumberPicker
