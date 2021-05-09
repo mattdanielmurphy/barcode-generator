@@ -106,9 +106,9 @@ function Generator() {
 			const text = await getTextFromDatabase()
 			// setText(text)
 			function filterScannedText() {
-				const elevenTo12Digits = /[\d\w]{11,12}/g
+				const tenTo12Digits = /[\d\w]{10,12}/g
 				const matches = text
-					.match(elevenTo12Digits)
+					.match(tenTo12Digits)
 					.map((match) => {
 						if (/^\d.$/.test(match)) return match
 						else return replaceLettersWithLikelyDigits(match)
