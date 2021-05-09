@@ -48,6 +48,8 @@ function BarcodeViewer({ UPCs, noWrapper }) {
 	const navDown = () => UPCs[index + 1] && setIndex(index + 1)
 	const reset = () => setCurrentUPC(UPCs[index])
 	const title = `${index + 1} of ${UPCs.length}`
+	const changeToMilkPrefix = () =>
+		setCurrentUPC('687' + currentUPC.substring(3))
 	return (
 		<BarcodeWrapper title={title} noWrapper={noWrapper}>
 			<Barcode
@@ -68,7 +70,10 @@ function BarcodeViewer({ UPCs, noWrapper }) {
 				`}
 			>
 				{currentUPC.match(/^[\d\s]*$/) && (
-					<Button onClick={reset}>Reset</Button>
+					<>
+						<Button onClick={changeToMilkPrefix}>687</Button>
+						<Button onClick={reset}>Reset</Button>
+					</>
 				)}
 				<Button onClick={navUp}>▲</Button>
 				<Button onClick={navDown}>▼</Button>
@@ -104,11 +109,12 @@ function Generator() {
 	useEffect(() => {
 		async function getText() {
 			const text = await getTextFromDatabase()
+			console.log('text from database:', text)
 			// setText(text)
 			function filterScannedText() {
-				const tenTo12Digits = /[\d\w]{10,12}/g
+				const elevenTo12Digits = /[\d\w]{10,12}/g
 				const matches = text
-					.match(tenTo12Digits)
+					.match(elevenTo12Digits)
 					.map((match) => {
 						if (/^\d.$/.test(match)) return match
 						else return replaceLettersWithLikelyDigits(match)
@@ -117,7 +123,7 @@ function Generator() {
 						console.log('mat', match)
 						const newMatch = match.replace(/\./, '')
 						console.log(newMatch)
-						return /^\d{11}/.exec(newMatch)[0]
+						return /^\d{10}/.exec(newMatch)[0]
 					})
 				// const re1 = /[1-9]\d{10}/g
 				// const matches = text.match(re1)
