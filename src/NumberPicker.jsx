@@ -1,5 +1,6 @@
 import 'react-number-picker/dist/style.css'
 
+import { Button } from 'antd'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -7,76 +8,71 @@ function NumberPicker({ currentUPC, setCurrentUPC }) {
 	function handleChange(e, i) {
 		let { value } = e.target
 		console.log(value)
-		if (!value) value = ' '
-		else if (value === '-1') value = 9
-		else if (value === '10') value = 0
-		console.log(value)
-		let newUPC =
-			currentUPC.substring(0, i) + value + currentUPC.substring(i + 1)
-		setCurrentUPC(newUPC)
+		if (/^\d$/.test(value)) {
+			if (value === '-1') value = 9
+			else if (value === '10') value = 0
+			console.log(value)
+			let newUPC =
+				currentUPC.substring(0, i) + value + currentUPC.substring(i + 1)
+			setCurrentUPC(newUPC)
+			e.target.select()
+		}
 	}
-
-	// const [origin, setOrigin] = useState()
-	// const [selectedDigit, setSelectedDigit] = useState()
-
-	// function handleMouseDown(e) {
-	// 	setOrigin(e.screenY)
-	// 	setSelectedDigit(e.target)
-	// 	e.preventDefault()
-	// }
-
-	// useEffect(() => {
-	// 	function handleMouseMove(e) {
-	// 		if (origin !== undefined && Math.abs(origin - e.screenY) > 5) {
-	// 			if (e.screenY >= origin) {
-	// 				e.target.value = Math.round((e.screenY - origin) / 10)
-	// 			} else {
-	// 				console.log(origin - e.screenY)
-	// 				console.log(Math.round((origin - e.screenY) / 10))
-	// 				e.target.value = Math.round((origin - e.screenY) / 10)
-	// 			}
-	// 		} else {
-	// 			// console.log(selectedDigit)
-	// 		}
-	// 	}
-	// 	function handleMouseUp(e) {
-	// 		// console.log(origin - e.screenY)
-	// 		// if (origin !== undefined && Math.abs(origin - e.screenY) > 5) {
-	// 		// 	if (e.screenY > origin) e.target.value++
-	// 		// 	else e.target.value--
-	// 		// } else {
-	// 		// 	console.log(selectedDigit)
-	// 		// }
-	// 		setOrigin(undefined)
-	// 	}
-	// 	document.addEventListener('mouseup', handleMouseUp)
-	// 	document.addEventListener('mousemove', handleMouseMove)
-	// 	return () => {
-	// 		document.removeEventListener('mouseup', handleMouseUp)
-	// 		document.removeEventListener('mousemove', handleMouseMove)
-	// 	}
-	// }, [origin, selectedDigit])
-
+	function handleKeyUp(e, i) {
+		console.log(e)
+		e.target.select()
+		if (
+			e.keyCode === 8 &&
+			window.confirm('Are you sure you want to delete this digit?')
+		)
+			setCurrentUPC(currentUPC.substring(0, i) + currentUPC.substring(i + 1))
+		if (
+			e.key === ' ' &&
+			window.confirm(
+				'Are you sure you want to insert a digit BEFORE this digit?',
+			)
+		)
+			setCurrentUPC(currentUPC.substring(0, i) + ' ' + currentUPC.substring(i))
+	}
 	return (
 		<Container>
+			<Button
+				onClick={(e) => {
+					setCurrentUPC(' ' + currentUPC)
+				}}
+				type='text'
+			>
+				➕
+			</Button>
 			{currentUPC.split('').map((digit, i) => (
 				<Input
-					type='number'
+					type='text'
+					onFocus={(e) => {
+						e.preventDefault()
+						e.target.select()
+					}}
+					onClick={(e) => {
+						e.preventDefault()
+						e.target.select()
+					}}
+					onMouseUp={(e) => {
+						e.preventDefault()
+						e.target.select()
+					}}
 					onChange={(e) => handleChange(e, i)}
-					// onMouseDown={handleMouseDown}
+					onKeyPress={(e) => e.target.select()}
+					onKeyUp={(e) => handleKeyUp(e, i)}
 					value={digit}
 				/>
-				// <Select
-				// 	key={i}
-				// 	type='number'
-				// 	value={digit}
-				// 	onChange={(e) => handleChange(e, i)}
-				// >
-				// 	{[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((v) => (
-				// 		<option value={v}>{v}</option>
-				// 	))}
-				// </Select>
 			))}
+			<Button
+				onClick={(e) => {
+					setCurrentUPC(currentUPC + ' ')
+				}}
+				type='text'
+			>
+				➕
+			</Button>
 		</Container>
 	)
 }
@@ -85,15 +81,6 @@ const Container = styled.div`
 	display: flex;
 	justify-content: center;
 `
-// const Select = styled.select`
-// 	-webkit-appearance: none;
-// 	border: none;
-// 	font-size: 1.5em;
-// 	width: 0.8em;
-// 	margin: 0;
-// 	background: none;
-// `
-
 const Input = styled.input`
 	-webkit-appearance: none;
 	width: 2em;
