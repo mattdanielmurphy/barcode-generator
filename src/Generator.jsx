@@ -1,9 +1,10 @@
 import 'antd/dist/antd.css'
 
-import { Button, Card, Layout, Modal, Space } from 'antd'
+import { Card, Layout, Modal, Space } from 'antd'
 import { useEffect, useState } from 'react'
 
 import Barcode from 'react-barcode'
+import { Button } from './components'
 import NumberPicker from './NumberPicker'
 import axios from 'axios'
 import styled from 'styled-components'

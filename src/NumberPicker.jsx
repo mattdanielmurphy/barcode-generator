@@ -1,6 +1,5 @@
 import 'react-number-picker/dist/style.css'
 
-import { Button } from 'antd'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -36,14 +35,6 @@ function NumberPicker({ currentUPC, setCurrentUPC }) {
 	}
 	return (
 		<Container>
-			<Button
-				onClick={(e) => {
-					setCurrentUPC(' ' + currentUPC)
-				}}
-				type='text'
-			>
-				➕
-			</Button>
 			{currentUPC.split('').map((digit, i) => (
 				<Input
 					type='text'
@@ -65,14 +56,6 @@ function NumberPicker({ currentUPC, setCurrentUPC }) {
 					value={digit}
 				/>
 			))}
-			<Button
-				onClick={(e) => {
-					setCurrentUPC(currentUPC + ' ')
-				}}
-				type='text'
-			>
-				➕
-			</Button>
 		</Container>
 	)
 }
@@ -83,7 +66,12 @@ const Container = styled.div`
 `
 const Input = styled.input`
 	-webkit-appearance: none;
-	width: 2em;
+	width: 1.1em;
+	background: none;
+	border: none;
+	text-align: center;
+	font-family: monospace;
+	font-size: 1.8em;
 `
 
 export default NumberPicker
