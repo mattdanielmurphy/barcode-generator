@@ -32,12 +32,15 @@ export function BarcodeViewer({ UPCs, noWrapper, removeCheckDigit }) {
 	const [index, setIndex] = useState(0)
 	const removeLeadingZeros = (n) => n.replace(/^0*/, '')
 	const getCurrentUPC = (UPC = UPCs[index]) => {
+		UPC = removeLeadingZeros(UPC)
 		if (removeCheckDigit && UPC.length > 10) UPC = UPC.replace(/\d$/, '')
-		return UPC.replace(/^0*/, '')
+		return UPC
 	}
 	const [currentUPC, setCurrentUPC] = useState(getCurrentUPC())
 	useEffect(() => {
 		let UPC = UPCs[index]
+		UPC = removeLeadingZeros(UPC)
+		console.log(UPC.length)
 		if (removeCheckDigit && UPC.length > 10) UPC = UPC.replace(/\d$/, '')
 		UPC = UPC.replace(/^0*/, '')
 		setCurrentUPC(UPC)

@@ -5,8 +5,10 @@ export const Button = (props) => (
 	<AntButton
 		css={`
 			&:active,
-			&:focus {
+			&:focus,
+			&:hover {
 				border: 1px solid #ddd;
+				color: black;
 			}
 		`}
 		{...props}
