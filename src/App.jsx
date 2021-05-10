@@ -10,6 +10,7 @@ const GlobalStyle = createGlobalStyle`
 			'Helvetica Neue', sans-serif !important;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
+		overflow: hidden;
 	}
 	
 	input[type=number]::-webkit-inner-spin-button, 
