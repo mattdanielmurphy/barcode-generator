@@ -30,7 +30,12 @@ const BarcodeWrapper = ({ children, title, noWrapper }) =>
 	)
 export function BarcodeViewer({ UPCs, noWrapper, removeCheckDigit }) {
 	const [index, setIndex] = useState(0)
-	const [currentUPC, setCurrentUPC] = useState(UPCs[index])
+	const removeLeadingZeros = (n) => n.replace(/^0*/, '')
+	const getCurrentUPC = (UPC = UPCs[index]) => {
+		if (removeCheckDigit && UPC.length > 10) UPC = UPC.replace(/\d$/, '')
+		return UPC.replace(/^0*/, '')
+	}
+	const [currentUPC, setCurrentUPC] = useState(getCurrentUPC())
 	useEffect(() => {
 		let UPC = UPCs[index]
 		if (removeCheckDigit && UPC.length > 10) UPC = UPC.replace(/\d$/, '')
@@ -40,7 +45,7 @@ export function BarcodeViewer({ UPCs, noWrapper, removeCheckDigit }) {
 
 	const navUp = () => UPCs[index - 1] && setIndex(index - 1)
 	const navDown = () => UPCs[index + 1] && setIndex(index + 1)
-	const reset = () => setCurrentUPC(UPCs[index])
+	const reset = () => setCurrentUPC(getCurrentUPC())
 	const title = `${index + 1} of ${UPCs.length}`
 	const changeToMilkPrefix = () =>
 		setCurrentUPC('687' + currentUPC.substring(3))
