@@ -4,6 +4,7 @@ import { BarcodeViewer, Button } from './components'
 import { Layout, Space } from 'antd'
 import { useEffect, useState } from 'react'
 
+import QuantitesPage from './components/QuantitiesPage'
 import { SignInCodesModal } from './components/SignInCodesModal'
 import axios from 'axios'
 import { replaceLettersWithLikelyDigits } from './components/replaceLettersWithLikelyDigits'
@@ -55,6 +56,10 @@ function Generator() {
 		getText()
 	}, [])
 
+	const [quantitiesPage, setQuantitiesPage] = useState(true)
+
+	const toggleQuantitiesPage = () => setQuantitiesPage(!quantitiesPage)
+
 	return (
 		<Layout
 			css={`
@@ -79,15 +84,22 @@ function Generator() {
 						Back
 					</Button>
 					<Button onClick={SignInCodesModal}>Sign In</Button>
+					<Button onClick={toggleQuantitiesPage}>
+						{quantitiesPage ? 'UPCs' : 'Quantites'}
+					</Button>
 				</Space>
 			</Header>
 			<Content>
-				{UPCs.length > 0 && (
-					<BarcodeViewer
-						removeCheckDigit={removeCheckDigit}
-						UPCs={UPCs}
-						setRemoveCheckDigit={setRemoveCheckDigit}
-					/>
+				{quantitiesPage ? (
+					<QuantitesPage />
+				) : (
+					UPCs.length > 0 && (
+						<BarcodeViewer
+							removeCheckDigit={removeCheckDigit}
+							UPCs={UPCs}
+							setRemoveCheckDigit={setRemoveCheckDigit}
+						/>
+					)
 				)}
 			</Content>
 		</Layout>
