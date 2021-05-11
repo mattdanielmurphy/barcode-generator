@@ -111,12 +111,12 @@ const Container = styled.div`
 `
 const Input = styled.input`
 	-webkit-appearance: none;
-	width: 1.5em;
+	width: 1.6em;
 	background: none;
 	border: none;
 	text-align: center;
 	font-family: monospace;
-	font-size: 1.5em;
+	font-size: 1.4em;
 `
 
 export default NumberPicker

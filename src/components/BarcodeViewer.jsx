@@ -1,4 +1,4 @@
-import { Card, Modal, Space } from 'antd'
+import { Card, Space } from 'antd'
 import { useEffect, useState } from 'react'
 
 import Barcode from 'react-barcode'
@@ -6,29 +6,24 @@ import { Button } from './Button'
 import NumberPicker from './NumberPicker'
 import styled from 'styled-components'
 
-const StyledCard = styled(Card)`
-	margin: 2em auto;
-	/* width: 400px; */
-	text-align: center;
-`
-
-const BarcodeWrapper = ({ children, title, noWrapper }) =>
-	noWrapper ? (
-		<Space
-			direction='vertical'
-			css={`
-				text-align: center;
-				display: flex;
-			`}
-		>
-			{children}
-		</Space>
-	) : (
-		<StyledCard title={title}>
-			<Space direction='vertical'>{children}</Space>
-		</StyledCard>
-	)
-export function BarcodeViewer({ UPCs, noWrapper, removeCheckDigit }) {
+const BarcodeWrapper = ({ children, title, noWrapper }) => (
+	<Space
+		direction='vertical'
+		css={`
+			text-align: center;
+			margin-top: 4em;
+			display: flex;
+		`}
+	>
+		{children}
+	</Space>
+)
+export function BarcodeViewer({
+	UPCs,
+	noWrapper,
+	removeCheckDigit,
+	setRemoveCheckDigit,
+}) {
 	const [index, setIndex] = useState(0)
 	const removeLeadingZeros = (n) => n.replace(/^0*/, '')
 	const getCurrentUPC = (UPC = UPCs[index]) => {
@@ -42,7 +37,6 @@ export function BarcodeViewer({ UPCs, noWrapper, removeCheckDigit }) {
 		UPC = removeLeadingZeros(UPC)
 		console.log(UPC.length)
 		if (removeCheckDigit && UPC.length > 10) UPC = UPC.replace(/\d$/, '')
-		UPC = UPC.replace(/^0*/, '')
 		setCurrentUPC(UPC)
 	}, [index, UPCs, removeCheckDigit])
 
@@ -75,9 +69,10 @@ export function BarcodeViewer({ UPCs, noWrapper, removeCheckDigit }) {
 				/>
 			)}
 			<Space
-				css={`
-					margin: 1em;
-				`}
+				// css={`
+				// 	margin: 1em;
+				// `}
+				direction='vertical'
 			>
 				{currentUPC.match(/^[\d\s]*$/) && (
 					<Space>
@@ -92,6 +87,19 @@ export function BarcodeViewer({ UPCs, noWrapper, removeCheckDigit }) {
 					</Space>
 				)}
 				<Space>
+					{currentUPC.match(/^[\d\s]*$/) && (
+						<Button
+							onClick={() => setRemoveCheckDigit(!removeCheckDigit)}
+							type='text'
+							css={`
+								color: ${removeCheckDigit ? '#00DE43' : 'black'};
+								border: 1px solid
+									${removeCheckDigit ? '#32FC6F' : 'transparent'};
+							`}
+						>
+							Check Digit
+						</Button>
+					)}
 					<Button onClick={navUp}>▲</Button>
 					<Button onClick={navDown}>▼</Button>
 				</Space>

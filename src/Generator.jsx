@@ -79,21 +79,15 @@ function Generator() {
 						Back
 					</Button>
 					<Button onClick={SignInCodesModal}>Sign In</Button>
-					<Button
-						onClick={() => setRemoveCheckDigit(!removeCheckDigit)}
-						type='text'
-						css={`
-							color: ${removeCheckDigit ? '#00DE43' : 'black'};
-							border: 1px solid ${removeCheckDigit ? '#32FC6F' : 'transparent'};
-						`}
-					>
-						Check Digit
-					</Button>
 				</Space>
 			</Header>
 			<Content>
 				{UPCs.length > 0 && (
-					<BarcodeViewer removeCheckDigit={removeCheckDigit} UPCs={UPCs} />
+					<BarcodeViewer
+						removeCheckDigit={removeCheckDigit}
+						UPCs={UPCs}
+						setRemoveCheckDigit={setRemoveCheckDigit}
+					/>
 				)}
 			</Content>
 		</Layout>
