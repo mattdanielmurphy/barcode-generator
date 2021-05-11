@@ -57,6 +57,7 @@ function Generator() {
 	}, [])
 
 	const [quantitiesPage, setQuantitiesPage] = useState(true)
+	const [prevQuantity, setPrevQuantity] = useState()
 
 	const toggleQuantitiesPage = () => setQuantitiesPage(!quantitiesPage)
 
@@ -76,22 +77,32 @@ function Generator() {
 					box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
 				`}
 			>
-				<Space>
-					<Button
-						type='link'
-						href='shortcuts://run-shortcut?name=Scan%20Barcodes'
-					>
-						Back
-					</Button>
-					<Button onClick={SignInCodesModal}>Sign In</Button>
-					<Button onClick={toggleQuantitiesPage}>
-						{quantitiesPage ? 'UPCs' : 'Quantites'}
-					</Button>
-				</Space>
+				<div
+					css={`
+						display: flex;
+						justify-content: center;
+					`}
+				>
+					<Space>
+						<Button
+							type='link'
+							href='shortcuts://run-shortcut?name=Scan%20Barcodes'
+						>
+							Back
+						</Button>
+						<Button onClick={SignInCodesModal}>Sign In</Button>
+						<Button onClick={toggleQuantitiesPage}>
+							{quantitiesPage ? 'UPCs' : 'Quantites'}
+						</Button>
+					</Space>
+				</div>
 			</Header>
 			<Content>
 				{quantitiesPage ? (
-					<QuantitesPage />
+					<QuantitesPage
+						prevQuantity={prevQuantity}
+						setPrevQuantity={setPrevQuantity}
+					/>
 				) : (
 					UPCs.length > 0 && (
 						<BarcodeViewer

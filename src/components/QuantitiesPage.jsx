@@ -1,8 +1,9 @@
+import { useEffect, useState } from 'react'
+
 import Barcode from 'react-barcode'
 import { Button } from './Button'
 import { Space } from 'antd'
 import styled from 'styled-components'
-import { useState } from 'react'
 
 const quantityPresets = [
 	2,
@@ -35,16 +36,19 @@ const quantityPresets = [
 	100,
 ]
 
-function QuantitiesPage() {
-	const [quantity, setQuantity] = useState(2)
+function QuantitiesPage({ prevQuantity = 2, setPrevQuantity }) {
+	const [quantity, setQuantity] = useState(prevQuantity)
 	const handleChange = (e) => setQuantity(e.target.value)
+	useEffect(() => {
+		if (prevQuantity !== quantity) setPrevQuantity(quantity)
+	}, [quantity, prevQuantity, setPrevQuantity])
 	return (
 		<Space
 			direction='vertical'
 			css={`
 				text-align: center;
 				margin: 2em;
-				margin-top: 4em;
+				margin-top: 2.2em;
 				display: flex;
 			`}
 		>
