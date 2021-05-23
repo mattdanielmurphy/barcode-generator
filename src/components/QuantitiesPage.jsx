@@ -6,42 +6,23 @@ import { Space } from 'antd'
 import styled from 'styled-components'
 
 const quantityPresets = [
-	2,
-	3,
-	4,
-	5,
-	6,
-	7,
-	8,
-	9,
-	10,
-	12,
-	15,
-	16,
-	18,
-	20,
-	21,
-	24,
-	25,
-	27,
-	30,
-	40,
-	44,
-	50,
-	60,
-	63,
-	70,
-	80,
-	90,
-	100,
+	2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16, 18, 20, 21, 24, 25, 27, 30, 40, 44,
+	50, 60, 63, 70, 80, 90, 100,
 ]
 
 function QuantitiesPage({ prevQuantity = 2, setPrevQuantity }) {
 	const [quantity, setQuantity] = useState(prevQuantity)
-	const handleChange = (e) => setQuantity(e.target.value)
+	const handleChange = (e) => {
+		const isNegative = /^-/.test(e.target.value)
+		const q = e.target.value.replaceAll('-', '')
+		if (isNegative) setQuantity('-' + q)
+		else setQuantity(q)
+	}
 	useEffect(() => {
 		if (prevQuantity !== quantity) setPrevQuantity(quantity)
 	}, [quantity, prevQuantity, setPrevQuantity])
+	const decrement = () => setQuantity(quantity - 1)
+	const increment = () => setQuantity(quantity + 1)
 	return (
 		<Space
 			direction='vertical'
@@ -52,17 +33,21 @@ function QuantitiesPage({ prevQuantity = 2, setPrevQuantity }) {
 				display: flex;
 			`}
 		>
-			<Barcode
-				{...{
-					width: 3,
-					height: 200,
-					displayValue: false,
-					margin: 0,
-				}}
-				value={quantity}
-			/>
+			<Space direction='horizontal'>
+				<Button onClick={decrement}>-</Button>
+				<Barcode
+					{...{
+						width: 3,
+						height: 200,
+						displayValue: false,
+						margin: 0,
+					}}
+					value={quantity}
+				/>
+				<Button onClick={increment}>+</Button>
+			</Space>
 			<Input
-				type='number'
+				type='text'
 				onFocus={(e) => {
 					e.preventDefault()
 					e.target.select()

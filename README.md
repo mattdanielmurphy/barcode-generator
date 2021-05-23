@@ -2,14 +2,31 @@
 
 Provided an input from an OCR scan, displays barcodes of UPCs found in the scan data.
 
+## Special Keys
+
+- https://www.zebra.com/us/en/support-downloads/knowledge-articles/evm/Sample-Barcodes-for-VT-Host-to-send-Function-key.html
+  F1: %AA
+  F2: %AB
+  F3: %AC
+  ...
+  F24: %AX
+
+  Enter: %A0
+  Clear: %A1
+  Reset: %A2
+  Roll Up / PA1: %A3
+  Roll Down / PA2: %A4
+  --- / PA3: %A5
+
 ## to do
 
-- parse data
-- convert each UPC into barcode
-- display interface
-  - advance to **next barcode** button
-  - return to **previous barcode** button
-  - number of current barcode in sequence
+- remove your sign in codes so Rayna can use app
+<!-- - DONE - remove dashes that aren't in the front -->
+- auto-confirm quantites over 100
+- add bottle deposit mode
+- add automatic fix for '1687...' (when 0 gets read as 1 and isn't removed), and a fix for '1###...' that shifts the numbers down to fix for generic case
+
+- number of current barcode in sequence
   - (advanced) show crop of photo of scan so you can see the quantity, verify the accuracy, and don't need to keep track on the paper
   - (advanced) note where the system missed a barcode so you know you have to do it manually
   - (advanced) what text proceeded it in the case of milk invoices

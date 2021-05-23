@@ -17,6 +17,7 @@ const appURL = 'https://barcode-generator-beta.vercel.app/'
 
 function Generator() {
 	const [UPCs, setUPCs] = useState([])
+	const [dataLoaded, setDataLoaded] = useState(false)
 	const [removeCheckDigit, setRemoveCheckDigit] = useState(true)
 
 	async function getTextFromDatabase() {
@@ -35,6 +36,7 @@ function Generator() {
 	useEffect(() => {
 		async function getText() {
 			const text = await getTextFromDatabase()
+			setDataLoaded(true)
 			console.log('text from database:', text)
 			function filterScannedText() {
 				const elevenTo12Digits = /[\d\w]{10,12}/g
@@ -56,7 +58,7 @@ function Generator() {
 		getText()
 	}, [])
 
-	const [quantitiesPage, setQuantitiesPage] = useState(true)
+	const [quantitiesPage, setQuantitiesPage] = useState(false)
 	const [prevQuantity, setPrevQuantity] = useState()
 
 	const toggleQuantitiesPage = () => setQuantitiesPage(!quantitiesPage)
@@ -91,26 +93,31 @@ function Generator() {
 							Back
 						</Button>
 						<Button onClick={SignInCodesModal}>Sign In</Button>
-						<Button onClick={toggleQuantitiesPage}>
-							{quantitiesPage ? 'UPCs' : 'Quantites'}
-						</Button>
+						{
+							<Button
+								disabled={UPCs.length === 0}
+								onClick={toggleQuantitiesPage}
+							>
+								{quantitiesPage ? 'UPCs' : 'Quantites'}
+							</Button>
+						}
 					</Space>
 				</div>
 			</Header>
 			<Content>
-				{quantitiesPage ? (
+				{!dataLoaded ? (
+					<></>
+				) : quantitiesPage || UPCs.length === 0 ? (
 					<QuantitesPage
 						prevQuantity={prevQuantity}
 						setPrevQuantity={setPrevQuantity}
 					/>
 				) : (
-					UPCs.length > 0 && (
-						<BarcodeViewer
-							removeCheckDigit={removeCheckDigit}
-							UPCs={UPCs}
-							setRemoveCheckDigit={setRemoveCheckDigit}
-						/>
-					)
+					<BarcodeViewer
+						removeCheckDigit={removeCheckDigit}
+						UPCs={UPCs}
+						setRemoveCheckDigit={setRemoveCheckDigit}
+					/>
 				)}
 			</Content>
 		</Layout>
