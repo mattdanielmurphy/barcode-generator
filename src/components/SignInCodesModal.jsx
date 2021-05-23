@@ -15,7 +15,8 @@ const SignInCodesViewer = ({ authenticated }) => {
 			type='password'
 			onChange={(e) => {
 				if (e.target.value === 'houseplants') {
-					Cookies.set('user', 'houseplants')
+					Cookies.set('user', 'matt')
+					Cookies.set('pass', 'houseplants')
 					setAuth(true)
 				}
 			}}
@@ -25,9 +26,14 @@ const SignInCodesViewer = ({ authenticated }) => {
 
 export const SignInCodesModal = () => {
 	const user = Cookies.get('user')
+	const pass = Cookies.get('pass')
 	Modal.info({
 		icon: false,
-		content: <SignInCodesViewer authenticated={user === 'houseplants'} />,
+		content: (
+			<SignInCodesViewer
+				authenticated={user === 'matt' && pass === 'houseplants'}
+			/>
+		),
 		onOk() {},
 		maskClosable: true,
 		okButtonProps: {

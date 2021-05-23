@@ -14,9 +14,9 @@ function QuantitiesPage({ prevQuantity = 2, setPrevQuantity }) {
 	const [quantity, setQuantity] = useState(prevQuantity)
 	const handleChange = (e) => {
 		const isNegative = /^-/.test(e.target.value)
-		const q = e.target.value.replaceAll('-', '')
+		const q = e.target.value.replaceAll(/\D/g, '')
 		if (isNegative) setQuantity('-' + q)
-		else setQuantity(q)
+		else setQuantity(q || 0)
 	}
 	useEffect(() => {
 		if (prevQuantity !== quantity) setPrevQuantity(quantity)

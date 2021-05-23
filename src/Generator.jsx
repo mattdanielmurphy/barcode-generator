@@ -4,6 +4,7 @@ import { BarcodeViewer, Button } from './components'
 import { Layout, Space } from 'antd'
 import { useEffect, useState } from 'react'
 
+import Cookies from 'js-cookie'
 import QuantitesPage from './components/QuantitiesPage'
 import { SignInCodesModal } from './components/SignInCodesModal'
 import axios from 'axios'
@@ -58,7 +59,9 @@ function Generator() {
 		getText()
 	}, [])
 
-	const [quantitiesPage, setQuantitiesPage] = useState(false)
+	const authenticated =
+		Cookies.get('user') === 'matt' && Cookies.get('pass') === 'houseplants'
+	const [quantitiesPage, setQuantitiesPage] = useState(!authenticated)
 	const [prevQuantity, setPrevQuantity] = useState()
 
 	const toggleQuantitiesPage = () => setQuantitiesPage(!quantitiesPage)
@@ -86,12 +89,15 @@ function Generator() {
 					`}
 				>
 					<Space>
-						<Button
-							type='link'
-							href='shortcuts://run-shortcut?name=Scan%20Barcodes'
-						>
-							Back
-						</Button>
+						{Cookies.get('user') === 'matt' &&
+							Cookies.get('pass') === 'houseplants' && (
+								<Button
+									type='link'
+									href='shortcuts://run-shortcut?name=Scan%20Barcodes'
+								>
+									Back
+								</Button>
+							)}
 						<Button onClick={SignInCodesModal}>Sign In</Button>
 						{
 							<Button
