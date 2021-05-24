@@ -1,26 +1,8 @@
 import 'react-number-picker/dist/style.css'
 
-import { DeleteOutlined } from '@ant-design/icons'
-import { Modal } from 'antd'
+import { Confirm } from './Confirm'
 import React from 'react'
 import styled from 'styled-components'
-
-export const Confirm = (question, digit = 'digit', callback) => {
-	const buttonProps = { size: 'large' }
-	Modal.confirm({
-		icon: <DeleteOutlined style={{ color: 'red' }} />,
-		title: question,
-		content: <p style={{ fontSize: '2em' }}>{digit}</p>,
-		onOk() {
-			callback()
-		},
-		onCancel() {},
-		maskClosable: true,
-		okButtonProps: buttonProps,
-		cancelButtonProps: buttonProps,
-		centered: true,
-	})
-}
 
 function NumberPicker({
 	currentUPC,

@@ -4,6 +4,7 @@ import { BarcodeViewer, Button } from './components'
 import { Layout, Space } from 'antd'
 import { useEffect, useState } from 'react'
 
+import { BottleDepositsModal } from './components/BottleDepositsModal'
 import Cookies from 'js-cookie'
 import QuantitesPage from './components/QuantitiesPage'
 import { SignInCodesModal } from './components/SignInCodesModal'
@@ -99,6 +100,7 @@ function Generator() {
 								</Button>
 							)}
 						<Button onClick={SignInCodesModal}>Sign In</Button>
+						<Button onClick={BottleDepositsModal}>Bottle Deposits</Button>
 						{
 							<Button
 								disabled={UPCs.length === 0}

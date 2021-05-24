@@ -5,7 +5,12 @@ import { Button } from './Button'
 import NumberPicker from './NumberPicker'
 import { Space } from 'antd'
 
-export function BarcodeViewer({ UPCs, removeCheckDigit, setRemoveCheckDigit }) {
+export function BarcodeViewer({
+	UPCs,
+	removeCheckDigit,
+	setRemoveCheckDigit,
+	barcodeOptions,
+}) {
 	const [index, setIndex] = useState(0)
 	const removeLeadingZeros = (n) => n.replace(/^0*/, '')
 	const getCurrentUPC = (UPC = UPCs[index]) => {
@@ -45,6 +50,7 @@ export function BarcodeViewer({ UPCs, removeCheckDigit, setRemoveCheckDigit }) {
 					height: 400,
 					displayValue: false,
 					margin: 0,
+					...barcodeOptions,
 				}}
 				value={currentUPC.replace(/\s/, '')}
 			/>
