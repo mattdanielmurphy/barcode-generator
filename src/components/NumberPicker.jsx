@@ -4,26 +4,58 @@ import { Confirm } from './Confirm'
 import React from 'react'
 import styled from 'styled-components'
 
+const SingleDigitInput = ({ handleChange, handleKeyUp, digit, i }) => (
+	<Input
+		type='number'
+		onFocus={(e) => {
+			e.preventDefault()
+			e.target.select()
+		}}
+		onClick={(e) => {
+			e.preventDefault()
+			e.target.select()
+		}}
+		onMouseUp={(e) => {
+			e.preventDefault()
+			e.target.select()
+		}}
+		onChange={(e) => handleChange(e, i)}
+		onKeyPress={(e) => e.target.select()}
+		onKeyUp={(e) => handleKeyUp(e, i)}
+		value={digit}
+		key={i}
+	/>
+)
+
 function NumberPicker({
 	currentUPC,
 	setCurrentUPC,
 	editingMode,
 	setEditingMode,
 }) {
-	function handleChange(e, i) {
+	const handleChange = (e, i) => {
 		let { value } = e.target
-		console.log('change', value)
-		if (/^\d$/.test(value)) {
-			if (value === '-1') value = 9
-			else if (value === '10') value = 0
-			console.log(value)
-			let newUPC =
-				currentUPC.substring(0, i) + value + currentUPC.substring(i + 1)
-			setCurrentUPC(newUPC)
-			e.target.select()
+		if (i) {
+			console.log('i')
+			if (/^\d$/.test(value)) {
+				if (value === '-1') value = 9
+				else if (value === '10') value = 0
+				const newUPC =
+					currentUPC.substring(0, i) + value + currentUPC.substring(i + 1)
+				setCurrentUPC(newUPC)
+				e.target.select()
+			}
+		} else {
+			const isNegative = /^-/.test(e.target.value)
+			const upc = e.target.value.replace(/\D/, '')
+			console.log('upc', upc)
+			if (isNegative) setCurrentUPC('-' + upc)
+			else setCurrentUPC(upc)
 		}
 	}
+
 	function handleKeyUp({ target, key, keyCode }, i) {
+		console.log('key uo')
 		target.select()
 		if (keyCode === 8)
 			Confirm('Are you sure you want to delete this digit?', target.value, () =>
@@ -40,13 +72,13 @@ function NumberPicker({
 					),
 			)
 	}
-	return (
-		<Container>
-			{editingMode ? (
+	if (editingMode) {
+		return (
+			<Container>
 				<input
-					type='number'
+					type='text'
 					value={currentUPC}
-					onChange={(e) => setCurrentUPC(e.target.value)}
+					onChange={handleChange}
 					onBlur={() => setEditingMode(false)}
 					onKeyUp={({ key }) => key === 'Enter' && setEditingMode(false)}
 					autoFocus={true}
@@ -59,32 +91,18 @@ function NumberPicker({
 						margin-bottom: 0;
 					`}
 				/>
-			) : (
-				currentUPC.split('').map((digit, i) => (
-					<Input
-						type='number'
-						onFocus={(e) => {
-							e.preventDefault()
-							e.target.select()
-						}}
-						onClick={(e) => {
-							e.preventDefault()
-							e.target.select()
-						}}
-						onMouseUp={(e) => {
-							e.preventDefault()
-							e.target.select()
-						}}
-						onChange={(e) => handleChange(e, i)}
-						onKeyPress={(e) => e.target.select()}
-						onKeyUp={(e) => handleKeyUp(e, i)}
-						value={digit}
-						key={i}
-					/>
-				))
-			)}
-		</Container>
-	)
+			</Container>
+		)
+	} else {
+		currentUPC = currentUPC || '0'
+		return (
+			<Container>
+				{currentUPC.split('').map((digit, i) => (
+					<SingleDigitInput digit={digit} i={i} handleKeyUp={handleKeyUp} />
+				))}
+			</Container>
+		)
+	}
 }
 
 const Container = styled.div`

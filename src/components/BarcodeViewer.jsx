@@ -59,6 +59,12 @@ export function BarcodeViewer({
 					currentUPC={currentUPC}
 					editingMode={editingMode}
 					setEditingMode={setEditingMode}
+					// setEditingMode={(bool) => {
+					// 	if (!bool && !currentUPC) {
+					// 		setCurrentUPC('0')
+					// 		setEditingMode(true)
+					// 	} else setEditingMode(bool)
+					// }}
 					setCurrentUPC={setCurrentUPC}
 				/>
 			)}
@@ -66,7 +72,7 @@ export function BarcodeViewer({
 				{currentUPC.match(/^[\d\s]*$/) && (
 					<Space>
 						<Button
-							disabled={/^687/.test(currentUPC)}
+							disabled={currentUPC && /^687/.test(currentUPC)}
 							onClick={changeToMilkPrefix}
 						>
 							687
