@@ -6,8 +6,8 @@ import { Space } from 'antd'
 import styled from 'styled-components'
 
 const quantityPresets = [
-	2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 16, 18, 20, 21, 24, 25, 27, 30, 40, 44,
-	50, 60, 63, 70, 80, 90, 100,
+	0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65,
+	70, 75, 80, 85, 90, 95,
 ]
 
 function QuantitiesPage({ prevQuantity = 2, setPrevQuantity }) {

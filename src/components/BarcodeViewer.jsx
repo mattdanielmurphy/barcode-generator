@@ -46,7 +46,7 @@ export function BarcodeViewer({
 		>
 			<Barcode
 				{...{
-					width: 3,
+					width: 2,
 					height: 400,
 					displayValue: false,
 					margin: 0,

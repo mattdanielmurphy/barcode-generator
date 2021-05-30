@@ -4,9 +4,10 @@ import { Confirm } from './Confirm'
 import React from 'react'
 import styled from 'styled-components'
 
-const SingleDigitInput = ({ handleChange, handleKeyUp, digit, i }) => (
+const SingleDigitInput = ({ handleChange, handleKeyDown, digit, i }) => (
 	<Input
 		type='number'
+		id={`single-input-${i}`}
 		onFocus={(e) => {
 			e.preventDefault()
 			e.target.select()
@@ -21,7 +22,7 @@ const SingleDigitInput = ({ handleChange, handleKeyUp, digit, i }) => (
 		}}
 		onChange={(e) => handleChange(e, i)}
 		onKeyPress={(e) => e.target.select()}
-		onKeyUp={(e) => handleKeyUp(e, i)}
+		onKeyDown={(e) => handleKeyDown(e, i)}
 		value={digit}
 		key={i}
 	/>
@@ -54,23 +55,19 @@ function NumberPicker({
 		}
 	}
 
-	function handleKeyUp({ target, key, keyCode }, i) {
-		console.log('key uo')
+	function handleKeyDown({ target, key, keyCode }, i) {
 		target.select()
-		if (keyCode === 8)
-			Confirm('Are you sure you want to delete this digit?', target.value, () =>
-				setCurrentUPC(currentUPC.substring(0, i) + currentUPC.substring(i + 1)),
-			)
+		if (keyCode === 8) {
+			setCurrentUPC(currentUPC.substring(0, i) + currentUPC.substring(i + 1))
+			const input = document.getElementById(`single-input-${i - 1}`)
+			input && input.focus()
+		}
 
 		if (key === ' ')
-			Confirm(
-				'Are you sure you want to insert a digit BEFORE this digit?',
-				target.value,
-				() =>
-					setCurrentUPC(
-						currentUPC.substring(0, i) + ' ' + currentUPC.substring(i),
-					),
-			)
+			setCurrentUPC(currentUPC.substring(0, i) + ' ' + currentUPC.substring(i))
+
+		if (key === 'Tab' && i === currentUPC.length - 1)
+			setCurrentUPC(currentUPC + ' ')
 	}
 	if (editingMode) {
 		return (
@@ -98,7 +95,12 @@ function NumberPicker({
 		return (
 			<Container>
 				{currentUPC.split('').map((digit, i) => (
-					<SingleDigitInput digit={digit} i={i} handleKeyUp={handleKeyUp} />
+					<SingleDigitInput
+						digit={digit}
+						i={i}
+						handleChange={handleChange}
+						handleKeyDown={handleKeyDown}
+					/>
 				))}
 			</Container>
 		)

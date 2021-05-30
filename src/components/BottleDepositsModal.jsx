@@ -57,6 +57,10 @@ const Deposits = ({ savedDeposits = defaultDeposits }) => {
 		setDeposits(newDeposits)
 		Cookies.set('deposits', newDeposits)
 
+		function padToElevenDigits(n) {
+			return '0'.repeat(11 - String(n).length) + String(n)
+		}
+
 		const barcodes = []
 		Object.entries(newDeposits).forEach(([categoryName, quantities]) => {
 			if (quantities && quantities.length > 0) {
@@ -66,27 +70,17 @@ const Deposits = ({ savedDeposits = defaultDeposits }) => {
 						(a, b) => Number(a) + Number(b),
 						0,
 					)
-					if (totalQuantity)
-						if (totalQuantity > 100)
-							barcodes.push(
-								c.deposit,
-								String(totalQuantity),
-								'y',
-								c.levy,
-								String(totalQuantity),
-								'y',
-							)
-						else
-							barcodes.push(
-								c.deposit,
-								String(totalQuantity),
-								c.levy,
-								String(totalQuantity),
-							)
+					if (totalQuantity) {
+						const quantity =
+							totalQuantity >= 100
+								? '10' + padToElevenDigits(totalQuantity) + 'y'
+								: String(totalQuantity)
+						barcodes.push(c.deposit, quantity, c.levy, quantity)
+						console.log(quantity)
+					}
 				}
 			}
 		})
-		console.log('barcodes', barcodes)
 		setBarcodes(barcodes)
 	}
 	return (
