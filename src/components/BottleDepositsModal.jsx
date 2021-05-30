@@ -1,9 +1,13 @@
+import { Divider, Modal, Typography } from 'antd'
+
 import { BarcodeViewer } from '.'
 import { Button } from '.'
 import { Confirm } from './Confirm'
 import Cookies from 'js-cookie'
-import { Modal } from 'antd'
+import TextareaAutosize from 'react-textarea-autosize'
 import { useState } from 'react'
+
+const { Title } = Typography
 
 const DepositCategory = ({ categoryName, quantities, setDepositCategory }) => {
 	const handleChange = (e) => {
@@ -16,19 +20,36 @@ const DepositCategory = ({ categoryName, quantities, setDepositCategory }) => {
 	}
 
 	return (
-		<>
-			<p>{categoryName}</p>
-			<textarea
+		<div
+			css={`
+				margin-top: 2em;
+				margin-bottom: 4em;
+			`}
+		>
+			<Title level={2}>{categoryName}</Title>
+			<TextareaAutosize
 				name={categoryName}
 				value={quantities && quantities.length > 0 ? quantities.join('\n') : ''}
 				onChange={handleChange}
 				rows={10}
+				css={`
+					font-size: 1.3em;
+					border: 2.5px solid #777;
+					padding: 0.4em;
+					font-weight: 500;
+					border-radius: 0.2em;
+					width: 100%;
+					&:focus {
+						outline: none;
+						border: 2.5px solid #ff0005;
+					}
+				`}
 			/>
-			<p>
-				sum:{' '}
-				<strong>{quantities.reduce((a, b) => Number(a) + Number(b), 0)}</strong>
-			</p>
-		</>
+			<Title level={4}>
+				= {quantities.reduce((a, b) => Number(a) + Number(b), 0)}
+			</Title>
+			<Divider />
+		</div>
 	)
 }
 
@@ -99,15 +120,32 @@ const Deposits = ({ savedDeposits = defaultDeposits }) => {
 			>
 				Clear
 			</Button>
-			{Object.entries(deposits).map(([categoryName, quantities]) => (
-				<DepositCategory
-					categoryName={categoryName}
-					quantities={quantities}
-					setDepositCategory={(value) =>
-						setDepositCategory(value, categoryName)
-					}
-				/>
-			))}
+			<div>
+				{Object.entries(deposits).map(([categoryName, quantities]) => (
+					<DepositCategory
+						categoryName={categoryName}
+						quantities={quantities}
+						setDepositCategory={(value) =>
+							setDepositCategory(value, categoryName)
+						}
+					/>
+				))}
+			</div>
+			{
+				<Title level={2}>
+					Total bottles:{' '}
+					{Object.values(deposits).length > 0 &&
+						Object.values(deposits).reduce(
+							(prev, curr) =>
+								Number(prev) +
+								curr.reduce(
+									(prevC, currC) => Number(prevC) + Number(currC),
+									[],
+								),
+							[],
+						)}
+				</Title>
+			}
 			{barcodes.length > 0 && (
 				<BarcodeViewer UPCs={barcodes} barcodeOptions={{ height: 200 }} />
 			)}
