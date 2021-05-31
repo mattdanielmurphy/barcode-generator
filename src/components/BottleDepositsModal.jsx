@@ -1,11 +1,11 @@
 import { Divider, Modal, Typography } from 'antd'
+import { useEffect, useState } from 'react'
 
 import { BarcodeViewer } from '.'
 import { Button } from '.'
 import { Confirm } from './Confirm'
 import Cookies from 'js-cookie'
 import TextareaAutosize from 'react-textarea-autosize'
-import { useState } from 'react'
 
 const { Title } = Typography
 
@@ -62,28 +62,17 @@ const defaultDeposits = {
 }
 
 const Deposits = ({ savedDeposits = defaultDeposits }) => {
-	const [deposits, setDeposits] = useState(savedDeposits)
-	const [barcodes, setBarcodes] = useState([])
-
-	const depositsAndLevies = {
-		zeroTo1LitreCartons: { deposit: '40009066428', levy: '40031215780' },
-		twoLitreCartons: { deposit: '40030050838', levy: '68113171045' },
-		zeroTo1LitreBottles: { deposit: '40009066414', levy: '40009066421' },
-		over1LitreBottles: { deposit: '40009066456', levy: '40009066463' },
-		sixPackBottles: { deposit: '40009066470', levy: '40009066477' },
-	}
-
-	const setDepositCategory = (value, categoryName) => {
-		const newDeposits = { ...deposits, [categoryName]: value }
-		setDeposits(newDeposits)
-		Cookies.set('deposits', newDeposits)
-
-		function padToElevenDigits(n) {
-			return '0'.repeat(11 - String(n).length) + String(n)
+	function makeBarcodes(deposits) {
+		const depositsAndLevies = {
+			zeroTo1LitreCartons: { deposit: '40009066428', levy: '40031215780' },
+			twoLitreCartons: { deposit: '40030050838', levy: '68113171045' },
+			zeroTo1LitreBottles: { deposit: '40009066414', levy: '40009066421' },
+			over1LitreBottles: { deposit: '40009066456', levy: '40009066463' },
+			sixPackBottles: { deposit: '40009066470', levy: '40009066477' },
 		}
 
 		const barcodes = []
-		Object.entries(newDeposits).forEach(([categoryName, quantities]) => {
+		Object.entries(deposits).forEach(([categoryName, quantities]) => {
 			if (quantities && quantities.length > 0) {
 				if (depositsAndLevies[[categoryName]]) {
 					const c = depositsAndLevies[[categoryName]]
@@ -91,18 +80,38 @@ const Deposits = ({ savedDeposits = defaultDeposits }) => {
 						(a, b) => Number(a) + Number(b),
 						0,
 					)
-					if (totalQuantity) {
-						const quantity =
-							totalQuantity >= 100
-								? '10' + padToElevenDigits(totalQuantity) + 'y'
-								: String(totalQuantity)
-						barcodes.push(c.deposit, quantity, c.levy, quantity)
-						console.log(quantity)
+					if (totalQuantity >= 100) {
+						barcodes.push(
+							c.deposit,
+							totalQuantity,
+							'y',
+							c.levy,
+							totalQuantity,
+							'y',
+						)
+					} else if (totalQuantity) {
+						barcodes.push(c.deposit, totalQuantity, c.levy, totalQuantity)
 					}
 				}
 			}
 		})
-		setBarcodes(barcodes)
+		return barcodes
+	}
+
+	const [deposits, setDeposits] = useState(() =>
+		Object.values(savedDeposits).length > 0 ? savedDeposits : defaultDeposits,
+	)
+	const [barcodes, setBarcodes] = useState(() => {
+		console.log('savedDeposits', savedDeposits)
+		if (Object.values(savedDeposits).length > 0) {
+			return makeBarcodes(savedDeposits)
+		} else return []
+	})
+	const setDepositCategory = (value, categoryName) => {
+		const newDeposits = { ...deposits, [categoryName]: value }
+		setDeposits(newDeposits)
+		Cookies.set('deposits', newDeposits)
+		setBarcodes(makeBarcodes(newDeposits))
 	}
 	return (
 		<>

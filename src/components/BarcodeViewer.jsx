@@ -12,7 +12,7 @@ export function BarcodeViewer({
 	barcodeOptions,
 }) {
 	const [index, setIndex] = useState(0)
-	const removeLeadingZeros = (n) => n.replace(/^0*/, '')
+	const removeLeadingZeros = (n) => String(n).replace(/^0*/, '')
 	const getCurrentUPC = (UPC = UPCs[index]) => {
 		UPC = removeLeadingZeros(UPC)
 		if (removeCheckDigit && UPC.length > 10) UPC = UPC.replace(/\d$/, '')
