@@ -1,6 +1,5 @@
 import 'react-number-picker/dist/style.css'
 
-import { Confirm } from './Confirm'
 import React from 'react'
 import styled from 'styled-components'
 

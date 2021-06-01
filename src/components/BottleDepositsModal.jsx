@@ -1,22 +1,30 @@
-import { Divider, Modal, Typography } from 'antd'
+import { Divider, Modal, Space, Typography } from 'antd'
 import { useEffect, useState } from 'react'
 
 import { BarcodeViewer } from '.'
 import { Button } from '.'
 import { Confirm } from './Confirm'
 import Cookies from 'js-cookie'
+import { DeleteOutlined } from '@ant-design/icons'
 import TextareaAutosize from 'react-textarea-autosize'
 
 const { Title } = Typography
 
-const DepositCategory = ({ categoryName, quantities, setDepositCategory }) => {
+const DepositCategory = ({
+	categoryName,
+	quantities,
+	setDepositCategory,
+	index,
+}) => {
 	const handleChange = (e) => {
 		if (
 			e.target.value
 				.split('\n')
 				.every((line) => /^[1-9]+[\d\n]*$|^$/g.test(line))
-		)
+		) {
+			Cookies.set('canceled', true)
 			setDepositCategory(e.target.value.split('\n'))
+		}
 	}
 
 	return (
@@ -61,7 +69,7 @@ const defaultDeposits = {
 	sixPackBottles: [],
 }
 
-const Deposits = ({ savedDeposits = defaultDeposits }) => {
+const Deposits = () => {
 	function makeBarcodes(deposits) {
 		const depositsAndLevies = {
 			zeroTo1LitreCartons: { deposit: '40009066428', levy: '40031215780' },
@@ -98,40 +106,91 @@ const Deposits = ({ savedDeposits = defaultDeposits }) => {
 		return barcodes
 	}
 
-	const [deposits, setDeposits] = useState(() =>
-		Object.values(savedDeposits).length > 0 ? savedDeposits : defaultDeposits,
-	)
-	const [barcodes, setBarcodes] = useState(() => {
-		console.log('savedDeposits', savedDeposits)
-		if (Object.values(savedDeposits).length > 0) {
-			return makeBarcodes(savedDeposits)
-		} else return []
-	})
+	const [deposits, setDeposits] = useState(defaultDeposits)
+	const [barcodes, setBarcodes] = useState([])
+
+	useEffect(() => {
+		if (JSON.parse(Cookies.get('canceled')))
+			Confirm(
+				'Do you want to restore previous deposits?',
+				'',
+				() => {
+					const depositsCookie = Cookies.get('deposits')
+					const savedDeposits = depositsCookie && JSON.parse(depositsCookie)
+					console.log('savedDeposits', savedDeposits)
+					setDeposits(savedDeposits)
+					setBarcodes(makeBarcodes(savedDeposits))
+				},
+				{ cancelText: 'No', okText: 'Yes' },
+			)
+	}, [])
+
 	const setDepositCategory = (value, categoryName) => {
 		const newDeposits = { ...deposits, [categoryName]: value }
 		setDeposits(newDeposits)
 		Cookies.set('deposits', newDeposits)
 		setBarcodes(makeBarcodes(newDeposits))
 	}
-	return (
-		<>
-			<Button
-				onClick={() =>
-					Confirm(
-						'Are you sure you want to clear all deposit quantites? (No going back)',
-						'',
-						() => {
-							setDeposits(defaultDeposits)
-							Cookies.set('deposits', {})
-						},
-					)
-				}
-			>
-				Clear
-			</Button>
+	return deposits ? (
+		<div
+			id='deposits-modal'
+			onBlur={
+				(e) =>
+					e.target.localName === 'textarea'
+						? e.target.parentElement.focus()
+						: e.target.focus()
+				/*selects the modal to fix scroll bug in offline version of app*/
+			}
+		>
+			<Title>Deposits &amp; Levies</Title>
+			<Space>
+				<Title
+					level={2}
+					style={{
+						marginTop: -10,
+						textTransform: 'uppercase',
+						fontWeight: 'normal',
+						letterSpacing: '.1em',
+						display: 'inline',
+					}}
+				>
+					Milk
+				</Title>
+				<Button
+					onClick={() =>
+						Confirm(
+							'Do you want to restore previous deposits?',
+							'',
+							() => {
+								const previousDeposits = JSON.parse(Cookies.get('deposits'))
+								setDeposits(previousDeposits)
+								setBarcodes(makeBarcodes(previousDeposits))
+							},
+							{ cancelText: 'No', okText: 'Yes' },
+						)
+					}
+				>
+					Restore
+				</Button>
+				<Button
+					onClick={() =>
+						Confirm(
+							'Are you sure you want to clear all deposit quantites? (No going back)',
+							'',
+							() => {
+								setDeposits(defaultDeposits)
+							},
+							{ Icon: <DeleteOutlined style={{ color: 'red' }} /> },
+						)
+					}
+				>
+					Clear
+				</Button>
+			</Space>
 			<div>
-				{Object.entries(deposits).map(([categoryName, quantities]) => (
+				{Object.entries(deposits).map(([categoryName, quantities], index) => (
 					<DepositCategory
+						key={index}
 						categoryName={categoryName}
 						quantities={quantities}
 						setDepositCategory={(value) =>
@@ -156,23 +215,30 @@ const Deposits = ({ savedDeposits = defaultDeposits }) => {
 				</Title>
 			}
 			{barcodes.length > 0 && (
-				<BarcodeViewer UPCs={barcodes} barcodeOptions={{ height: 200 }} />
+				<BarcodeViewer
+					UPCs={barcodes}
+					barcodeOptions={{ height: 200 }}
+					setBarcodesCycled={() => {
+						console.log('cycled!')
+						Cookies.set('canceled', false)
+						console.log(Cookies.get('canceled'))
+					}}
+				/>
 			)}
-		</>
+		</div>
+	) : (
+		<></>
 	)
 }
 
 export const BottleDepositsModal = () => {
-	const depositsCookie = Cookies.get('deposits')
-	const savedDeposits = depositsCookie ? JSON.parse(depositsCookie) : undefined
 	Modal.info({
 		icon: false,
-		content: <Deposits savedDeposits={savedDeposits} />,
-		onOk() {},
+		content: <Deposits />,
 		maskClosable: true,
 		okButtonProps: {
 			size: 'large',
 		},
-		centered: true,
+		style: { marginTop: 100 },
 	})
 }

@@ -10,6 +10,7 @@ export function BarcodeViewer({
 	removeCheckDigit,
 	setRemoveCheckDigit,
 	barcodeOptions,
+	setBarcodesCycled,
 }) {
 	const [index, setIndex] = useState(0)
 	const removeLeadingZeros = (n) => String(n).replace(/^0*/, '')
@@ -27,8 +28,18 @@ export function BarcodeViewer({
 		setCurrentUPC(UPC)
 	}, [index, UPCs, removeCheckDigit])
 
-	const navUp = () => UPCs[index - 1] && setIndex(index - 1)
-	const navDown = () => UPCs[index + 1] && setIndex(index + 1)
+	const navUp = () => {
+		if (UPCs[index - 1]) {
+			setIndex(index - 1)
+			setBarcodesCycled(true)
+		}
+	}
+	const navDown = () => {
+		if (UPCs[index + 1]) {
+			setIndex(index + 1)
+			setBarcodesCycled(true)
+		}
+	}
 	const reset = () => setCurrentUPC(getCurrentUPC())
 	const changeToMilkPrefix = () =>
 		setCurrentUPC('687' + currentUPC.substring(3))
