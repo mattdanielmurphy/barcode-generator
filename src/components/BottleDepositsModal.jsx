@@ -10,12 +10,7 @@ import TextareaAutosize from 'react-textarea-autosize'
 
 const { Title } = Typography
 
-const DepositCategory = ({
-	categoryName,
-	quantities,
-	setDepositCategory,
-	index,
-}) => {
+const DepositCategory = ({ categoryName, quantities, setDepositCategory }) => {
 	const handleChange = (e) => {
 		if (
 			e.target.value
@@ -110,7 +105,7 @@ const Deposits = () => {
 	const [barcodes, setBarcodes] = useState([])
 
 	useEffect(() => {
-		if (JSON.parse(Cookies.get('canceled')))
+		if (Cookies.get('canceled') && JSON.parse(Cookies.get('canceled')))
 			Confirm(
 				'Do you want to restore previous deposits?',
 				'',
@@ -133,7 +128,6 @@ const Deposits = () => {
 	}
 	return deposits ? (
 		<div
-			id='deposits-modal'
 			onBlur={
 				(e) =>
 					e.target.localName === 'textarea'
@@ -162,7 +156,8 @@ const Deposits = () => {
 							'Do you want to restore previous deposits?',
 							'',
 							() => {
-								const previousDeposits = JSON.parse(Cookies.get('deposits'))
+								const previousDeposits =
+									Cookies.get('deposits') && JSON.parse(Cookies.get('deposits'))
 								setDeposits(previousDeposits)
 								setBarcodes(makeBarcodes(previousDeposits))
 							},
