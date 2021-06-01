@@ -100,7 +100,7 @@ function Generator() {
 								</Button>
 							)}
 						<Button onClick={SignInCodesModal}>Sign In</Button>
-						<Button onClick={BottleDepositsModal}>Bottle Deposits</Button>
+						<Button onClick={BottleDepositsModal}>Deposits</Button>
 						{
 							<Button
 								disabled={UPCs.length === 0}
