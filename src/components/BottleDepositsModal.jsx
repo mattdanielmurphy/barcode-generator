@@ -35,6 +35,7 @@ const DepositCategory = ({ categoryName, quantities, setDepositCategory }) => {
 				value={quantities && quantities.length > 0 ? quantities.join('\n') : ''}
 				onChange={handleChange}
 				rows={10}
+				className='deposit-quantity-input'
 				css={`
 					font-size: 1.3em;
 					border: 2.5px solid #777;
@@ -115,6 +116,7 @@ const Deposits = () => {
 					console.log('savedDeposits', savedDeposits)
 					setDeposits(savedDeposits)
 					setBarcodes(makeBarcodes(savedDeposits))
+					document.getElementsByClassName('deposit-quantity-input')[0].focus()
 				},
 				{ cancelText: 'No', okText: 'Yes' },
 			)
@@ -144,7 +146,6 @@ const Deposits = () => {
 						marginTop: -10,
 						textTransform: 'uppercase',
 						fontWeight: 'normal',
-						letterSpacing: '.1em',
 						display: 'inline',
 					}}
 				>
@@ -160,6 +161,9 @@ const Deposits = () => {
 									Cookies.get('deposits') && JSON.parse(Cookies.get('deposits'))
 								setDeposits(previousDeposits)
 								setBarcodes(makeBarcodes(previousDeposits))
+								document
+									.getElementsByClassName('deposit-quantity-input')[0]
+									.focus()
 							},
 							{ cancelText: 'No', okText: 'Yes' },
 						)
@@ -174,6 +178,9 @@ const Deposits = () => {
 							'',
 							() => {
 								setDeposits(defaultDeposits)
+								document
+									.getElementsByClassName('deposit-quantity-input')[0]
+									.focus()
 							},
 							{ Icon: <DeleteOutlined style={{ color: 'red' }} /> },
 						)
@@ -226,7 +233,8 @@ const Deposits = () => {
 	)
 }
 
-export const BottleDepositsModal = () => {
+export const BottleDepositsModal = (e) => {
+	e.preventDefault()
 	Modal.info({
 		icon: false,
 		content: <Deposits />,
@@ -236,4 +244,8 @@ export const BottleDepositsModal = () => {
 		},
 		style: { marginTop: 100 },
 	})
+	setTimeout(() => {
+		document.getElementsByClassName('ant-modal-wrap')[0].scrollTo(0, 0)
+		document.getElementsByClassName('deposit-quantity-input')[0].focus()
+	}, 100)
 }
