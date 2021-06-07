@@ -65,47 +65,34 @@ export function BarcodeViewer({
 				}}
 				value={currentUPC.replace(/\s/, '')}
 			/>
-			{currentUPC.match(/^[\d\s]*$/) && (
-				<NumberPicker
-					currentUPC={currentUPC}
-					editingMode={editingMode}
-					setEditingMode={setEditingMode}
-					// setEditingMode={(bool) => {
-					// 	if (!bool && !currentUPC) {
-					// 		setCurrentUPC('0')
-					// 		setEditingMode(true)
-					// 	} else setEditingMode(bool)
-					// }}
-					setCurrentUPC={setCurrentUPC}
-				/>
-			)}
+			<NumberPicker
+				currentUPC={currentUPC}
+				editingMode={editingMode}
+				setEditingMode={setEditingMode}
+				setCurrentUPC={setCurrentUPC}
+			/>
 			<Space direction='vertical'>
-				{currentUPC.match(/^[\d\s]*$/) && (
-					<Space>
-						<Button
-							disabled={currentUPC && /^687/.test(currentUPC)}
-							onClick={changeToMilkPrefix}
-						>
-							687
-						</Button>
-						<Button onClick={() => setEditingMode(true)}>Edit</Button>
-						<Button onClick={reset}>Reset</Button>
-					</Space>
-				)}
 				<Space>
-					{currentUPC.match(/^[\d\s]*$/) && (
-						<Button
-							onClick={() => setRemoveCheckDigit(!removeCheckDigit)}
-							type='text'
-							css={`
-								color: ${removeCheckDigit ? '#00DE43' : 'black'};
-								border: 1px solid
-									${removeCheckDigit ? '#32FC6F' : 'transparent'};
-							`}
-						>
-							Check Digit
-						</Button>
-					)}
+					<Button
+						disabled={currentUPC && /^687/.test(currentUPC)}
+						onClick={changeToMilkPrefix}
+					>
+						687
+					</Button>
+					<Button onClick={() => setEditingMode(true)}>Edit</Button>
+					<Button onClick={reset}>Reset</Button>
+				</Space>
+				<Space>
+					<Button
+						onClick={() => setRemoveCheckDigit(!removeCheckDigit)}
+						type='text'
+						css={`
+							color: ${removeCheckDigit ? '#00DE43' : 'black'};
+							border: 1px solid ${removeCheckDigit ? '#32FC6F' : 'transparent'};
+						`}
+					>
+						Check Digit
+					</Button>
 					<Button onClick={navUp}>▲</Button>
 					<Button onClick={navDown}>▼</Button>
 				</Space>

@@ -42,18 +42,19 @@ function Generator() {
 			console.log('text from database:', text)
 			function filterScannedText() {
 				const elevenTo12Digits = /[\d\w]{10,12}/g
-				const matches = text
-					.match(elevenTo12Digits)
-					.map((match) => {
-						if (/^\d.$/.test(match)) return match
-						else return replaceLettersWithLikelyDigits(match)
-					})
-					.map((match) => {
-						match = match.replace(/\D/, '')
-						// if (/^\d{10,11}/.exec(match))
-						return match
-					})
-				return matches
+				const matches = text.match(elevenTo12Digits)
+				if (matches) {
+					return matches
+						.map((match) => {
+							if (/^\d.$/.test(match)) return match
+							else return replaceLettersWithLikelyDigits(match)
+						})
+						.map((match) => {
+							match = match.replace(/\D/, '')
+							// if (/^\d{10,11}/.exec(match))
+							return match
+						})
+				} else return ['0']
 			}
 			setUPCs(filterScannedText())
 		}
@@ -77,7 +78,7 @@ function Generator() {
 				css={`
 					position: fixed;
 					bottom: 0;
-					width: 100%;
+					width: 414px;
 					z-index: 999;
 					background: white;
 					box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);

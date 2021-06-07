@@ -3,7 +3,16 @@ import styled, { createGlobalStyle } from 'styled-components'
 import Generator from './Generator'
 
 const GlobalStyle = createGlobalStyle`
+background: #eee;
+color: #333;
+@media (prefers-color-scheme: dark) {
+  body, .ant-layout, .ant-layout-header {
+    color: #eee;
+    background-color: #121212;
+  }
+}
 	body {
+		max-width: 414px;
 		margin: 0;
 		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
 			'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
